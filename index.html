@@ -1,0 +1,852 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="SKant Healthcare project and budget tracking dashboard, working prototype by Atrina Technologies.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230a6072'/%3E%3Crect x='7' y='17' width='4' height='8' rx='1.5' fill='%23fff'/%3E%3Crect x='14' y='11' width='4' height='14' rx='1.5' fill='%23fff'/%3E%3Crect x='21' y='7' width='4' height='18' rx='1.5' fill='%23e0920d'/%3E%3C/svg%3E">
+<style>
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<title>SKant Portfolio Control</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+/* Light-only control room. Sticky command bar, six-tile signal row, three read panels,
+   the filing runway as the one wide signature, then the four action panels. */
+:root{
+  color-scheme:light;
+  --bg:#eaeff1; --surf:#ffffff; --surf2:#f5f8f9; --ink:#0d1b21; --ink2:#2c454e;
+  --mut:#5e7780; --line:#d9e3e7; --line2:#eaf0f2;
+  --brand:#0a6072; --brand2:#0e8099; --brandsoft:#e2f0f4; --onbrand:#ffffff;
+  --red:#e24c4c; --amber:#e0920d; --green:#38a160; --blue:#2490ef; --slate:#8da0a8;
+  --redsoft:#fdecec; --ambersoft:#fdf4e4; --greensoft:#eaf6ee; --bluesoft:#eaf4fe; --slatesoft:#eef2f4;
+  --redink:#a33636; --amberink:#8a5a09; --greenink:#226c41; --blueink:#135c9c;
+  --shadow:0 1px 2px rgba(13,27,33,.05),0 6px 20px -12px rgba(13,27,33,.18);
+  --fs:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
+  --fm:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+  --r:14px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--fs);font-size:14px;
+  line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1380px;margin:0 auto;padding-inline:16px;padding-block:0 56px}
+.tnum{font-variant-numeric:tabular-nums}
+
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:var(--bg);
+  border-bottom:1px solid var(--line)}
+.barin{max-width:1380px;margin:0 auto;padding:16px;display:flex;gap:14px;align-items:center;
+  flex-wrap:wrap}
+.logo h1{margin:0;font-size:21px;font-weight:800;letter-spacing:-.03em;line-height:1.15}
+.logo h1 em{font-style:normal;color:var(--brand)}
+.logo p{margin:1px 0 0;font-size:11px;color:var(--mut);font-family:var(--fm);letter-spacing:.02em}
+.ctrls{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+select.sel,button.bt{font-family:var(--fs);font-size:12.5px;font-weight:600;color:var(--ink2);
+  background:var(--surf);border:1px solid var(--line);border-radius:999px;padding:7px 14px;
+  cursor:pointer;line-height:1.3}
+select.sel{padding-right:30px;appearance:none;
+  background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%);
+  background-position:calc(100% - 15px) 51%,calc(100% - 11px) 51%;
+  background-size:4px 4px,4px 4px;background-repeat:no-repeat}
+select.sel:hover,button.bt:hover{border-color:var(--brand);color:var(--brand)}
+.live{display:inline-flex;align-items:center;gap:7px;font-family:var(--fm);font-size:11.5px;
+  color:var(--mut);background:var(--surf);border:1px solid var(--line);border-radius:999px;padding:7px 13px}
+.live i{width:7px;height:7px;border-radius:50%;background:var(--green);display:block;animation:pl 2.4s infinite}
+@keyframes pl{0%{box-shadow:0 0 0 0 rgba(56,161,96,.5)}70%{box-shadow:0 0 0 7px rgba(56,161,96,0)}
+  100%{box-shadow:0 0 0 0 rgba(56,161,96,0)}}
+button.bt.p{background:var(--brand);border-color:var(--brand);color:var(--onbrand)}
+button.bt.p:hover{background:var(--brand2);border-color:var(--brand2);color:var(--onbrand)}
+@media (prefers-reduced-motion:reduce){.live i{animation:none}}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+
+.tabs{display:inline-flex;gap:2px;background:var(--surf2);border:1px solid var(--line);
+  border-radius:999px;padding:3px;margin-left:auto;flex-wrap:wrap}
+.tabs button{font-family:var(--fs);font-size:11.5px;font-weight:700;border:0;border-radius:999px;
+  padding:4px 11px;background:transparent;color:var(--mut);cursor:pointer;letter-spacing:-.01em}
+.tabs button[aria-selected="true"]{background:var(--brand);color:var(--onbrand)}
+.tabs button:not([aria-selected="true"]):hover{color:var(--ink);background:var(--surf)}
+.gcap{margin:-6px 0 13px;font-size:12.5px;color:var(--mut);line-height:1.45}
+.gcap b{color:var(--ink2);font-weight:700}
+#group.flash{animation:fl .5s ease-out}
+@keyframes fl{from{opacity:.35;transform:translateY(-4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){#group.flash{animation:none}}
+
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.kpi{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:16px 15px 14px;
+  box-shadow:var(--shadow);position:relative;overflow:hidden;min-width:0}
+.kpi::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:var(--rail,var(--brand))}
+.kpi .k{font-family:var(--fm);font-size:10px;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--mut);margin-bottom:7px}
+.kpi .v{font-size:30px;font-weight:800;letter-spacing:-.035em;line-height:1;
+  font-variant-numeric:tabular-nums}
+.kpi .d{font-size:11.5px;color:var(--mut);margin-top:6px;line-height:1.35}
+.kpi .d b{color:var(--ink2);font-weight:700}
+
+.row3{display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:12px;margin-top:12px;align-items:start}
+.row2{display:grid;grid-template-columns:1.15fr 1fr;gap:12px;margin-top:12px;align-items:start}
+.panel{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);
+  box-shadow:var(--shadow);padding:18px;min-width:0}
+.ph{display:flex;align-items:baseline;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.ph h2{margin:0;font-size:11px;font-family:var(--fm);font-weight:600;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--mut)}
+.ph .sub{margin-left:auto;font-size:11px;color:var(--mut)}
+
+.gauge{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.gauge svg{flex:none}
+.gw .st{font-size:13px;font-weight:700}
+.gw p{margin:6px 0 0;font-size:12.5px;color:var(--mut);max-width:24ch;line-height:1.45}
+.lgd{margin-top:14px;display:grid;gap:7px}
+.lgd div{display:grid;grid-template-columns:11px 1fr auto auto;gap:9px;align-items:center;
+  font-size:12.5px;padding:2px 4px;border-radius:5px}
+.lgd div:hover{background:var(--surf2)}
+.lgd i{width:10px;height:10px;border-radius:3px;display:block}
+.lgd b{font-weight:700;font-variant-numeric:tabular-nums}
+.lgd span.pc{color:var(--mut);font-variant-numeric:tabular-nums;font-size:11.5px;min-width:34px;
+  text-align:right}
+
+.glist{display:grid;gap:13px;max-height:292px;overflow-y:auto;padding-right:4px}
+.gi .t{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.gi .t b{font-size:13.5px;font-weight:700;letter-spacing:-.01em}
+.gi .t .tag-end{margin-left:auto}
+.gi .m{font-size:11.5px;color:var(--mut);margin-bottom:6px;font-variant-numeric:tabular-nums}
+.gi .m b{color:var(--ink2);font-weight:700}
+.trk{height:7px;border-radius:99px;background:var(--line2);overflow:hidden}
+.trk i{display:block;height:100%;border-radius:99px}
+
+.tag{display:inline-flex;align-items:center;gap:5px;font-family:var(--fm);font-size:9.5px;
+  font-weight:600;letter-spacing:.07em;text-transform:uppercase;padding:3px 8px;border-radius:999px;
+  white-space:nowrap}
+.tag::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor;flex:none}
+.tag.r{color:var(--redink);background:var(--redsoft)}
+.tag.a{color:var(--amberink);background:var(--ambersoft)}
+.tag.g{color:var(--greenink);background:var(--greensoft)}
+.tag.b{color:var(--blueink);background:var(--bluesoft)}
+.tag.s{color:var(--mut);background:var(--slatesoft)}
+
+.runway{margin-top:12px}
+.rwscroll{overflow-x:auto;overflow-y:hidden}
+.rw{min-width:880px}
+.rwhead,.rwrow,.rwticks{display:grid;grid-template-columns:250px 1fr;gap:14px}
+.rwhead{font-family:var(--fm);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--mut);padding-bottom:7px;border-bottom:1px solid var(--line)}
+.rwrow{align-items:center;padding:9px 0;border-bottom:1px solid var(--line2)}
+.rwrow:last-child{border-bottom:0}
+.rwrow:hover{background:var(--surf2)}
+.rwname b{display:block;font-size:13px;font-weight:700;letter-spacing:-.01em;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.rwname span{font-size:11px;color:var(--mut);font-family:var(--fm)}
+.rwtrack{position:relative;height:26px}
+.rwaxis{position:absolute;left:0;right:0;top:12px;height:2px;background:var(--line2);border-radius:2px}
+.rwslip{position:absolute;top:10px;height:6px;border-radius:99px;background:var(--amber)}
+.rwslip.bad{background:var(--red)}
+.rwdot{position:absolute;top:6px;width:14px;height:14px;border-radius:50%;margin-left:-7px}
+.rwdot.target{background:var(--surf);border:2px dashed var(--slate);top:5px;width:12px;height:12px}
+.rwdot.fc{background:var(--green);border:2px solid var(--surf)}
+.rwdot.fc.late{background:var(--red)}
+.rwdot.fc.near{background:var(--amber)}
+.rwnow{position:absolute;top:-5px;bottom:-5px;width:2px;background:var(--brand);opacity:.5}
+.rwnow.first{opacity:.9}
+.rwnow.first::after{content:"TODAY";position:absolute;top:-15px;left:-15px;font-family:var(--fm);
+  font-size:8.5px;font-weight:600;letter-spacing:.1em;color:var(--brand)}
+.rwticks{margin-top:4px}
+.rwtk{position:relative;height:16px;font-family:var(--fm);font-size:9.5px;color:var(--mut)}
+.rwtk span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+.rwkey{display:flex;gap:16px;flex-wrap:wrap;font-size:11.5px;color:var(--mut);margin-top:12px;
+  align-items:center}
+.rwkey span{display:inline-flex;align-items:center;gap:6px}
+.rwkey i{width:11px;height:11px;border-radius:50%;display:block}
+.rwkey i.tg{border:2px dashed var(--slate);background:transparent;width:9px;height:9px}
+
+.att{display:grid;gap:9px}
+.ai{display:grid;grid-template-columns:30px 1fr auto;gap:12px;align-items:center;
+  border:1px solid var(--line);border-radius:11px;padding:11px 13px;background:var(--surf);
+  transition:border-color .15s,transform .15s}
+.ai:hover{border-color:var(--brand);transform:translateX(2px)}
+.ai.sev1{border-left:3px solid var(--red)}
+.ai.sev2{border-left:3px solid var(--amber)}
+.rk{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-family:var(--fm);
+  font-size:12px;font-weight:600;background:var(--surf2);color:var(--mut)}
+.ai.sev1 .rk{background:var(--redsoft);color:var(--redink)}
+.ai.sev2 .rk{background:var(--ambersoft);color:var(--amberink)}
+.ai .nm{font-size:13.5px;font-weight:700;letter-spacing:-.01em;margin-bottom:2px}
+.ai .wy{font-size:11.5px;color:var(--mut);line-height:1.42}
+.ai .wy b{color:var(--ink2);font-weight:700}
+.ai .rt{text-align:right}
+.ai .rt .n{font-size:17px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;
+  line-height:1.1}
+.ai .rt .u{font-family:var(--fm);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--mut)}
+
+.mlist{display:grid;gap:11px}
+.mi .t{display:flex;align-items:baseline;gap:8px;font-size:12.5px;margin-bottom:5px}
+.mi .t b{font-weight:700}
+.mi .t .amt{color:var(--mut);font-family:var(--fm);font-size:10.5px}
+.mi .t .pc{margin-left:auto;font-weight:800;font-variant-numeric:tabular-nums;font-size:13px}
+.mbar{height:9px;border-radius:99px;background:var(--line2);position:relative}
+.mbar i{position:absolute;inset:0 auto 0 0;border-radius:99px}
+.mbar u{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--ink2);text-decoration:none}
+.msum{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px;
+  border-top:1px solid var(--line);padding-top:14px}
+.msum div .k{font-family:var(--fm);font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--mut)}
+.msum div .v{font-size:19px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+
+table.tt{width:100%;border-collapse:collapse;font-size:12.5px}
+table.tt th{text-align:left;font-family:var(--fm);font-size:9.5px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--mut);font-weight:600;padding:0 10px 7px 0;
+  border-bottom:1px solid var(--line)}
+table.tt td{padding:8px 10px 8px 0;border-bottom:1px solid var(--line2);vertical-align:top}
+table.tt tr:last-child td{border-bottom:0}
+table.tt td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+table.tt .sm{font-size:11px;color:var(--mut)}
+
+#tip{position:fixed;z-index:90;pointer-events:none;background:var(--ink);color:#fff;
+  font-size:11.5px;line-height:1.45;padding:9px 12px;border-radius:9px;max-width:270px;
+  box-shadow:0 8px 24px rgba(0,0,0,.26);opacity:0;transform:translateY(3px);transition:opacity .12s}
+#tip.on{opacity:1;transform:translateY(0)}
+#tip b{font-weight:700}
+#tip .m{font-family:var(--fm);font-size:10.5px;opacity:.78;display:block;margin:2px 0 4px}
+
+.srch{font-family:var(--fs);font-size:12.5px;color:var(--ink);background:var(--surf2);
+  border:1px solid var(--line);border-radius:999px;padding:6px 14px;width:280px;max-width:100%;
+  margin-left:auto}
+.srch:focus{background:var(--surf);border-color:var(--brand);outline:none}
+.regwrap{max-height:460px;overflow:auto;border:1px solid var(--line);border-radius:10px}
+table.reg{width:100%;min-width:900px;border-collapse:separate;border-spacing:0;font-size:12.5px}
+table.reg th{position:sticky;top:0;z-index:2;background:var(--surf2);text-align:left;
+  font-family:var(--fm);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--mut);font-weight:600;padding:9px 10px;border-bottom:1px solid var(--line);
+  cursor:pointer;white-space:nowrap;user-select:none}
+table.reg th:hover{color:var(--brand)}
+table.reg th .ar{opacity:.4;margin-left:3px}
+table.reg th.on{color:var(--brand)} table.reg th.on .ar{opacity:1}
+table.reg td{padding:8px 10px;border-bottom:1px solid var(--line2);vertical-align:middle;
+  white-space:nowrap}
+table.reg tr:last-child td{border-bottom:0}
+table.reg tbody tr:hover td{background:var(--surf2)}
+table.reg th:first-child,table.reg td:first-child{position:sticky;left:0;z-index:1;
+  background:var(--surf);box-shadow:1px 0 0 var(--line)}
+table.reg th:first-child{z-index:3;background:var(--surf2)}
+table.reg tbody tr:hover td:first-child{background:var(--surf2)}
+table.reg td.num{text-align:right;font-variant-numeric:tabular-nums}
+table.reg .pn{font-weight:700;max-width:260px;overflow:hidden;text-overflow:ellipsis;display:block}
+table.reg .cdx{font-family:var(--fm);font-size:10px;color:var(--mut)}
+.ub{height:6px;width:64px;border-radius:99px;background:var(--line2);display:inline-block;
+  vertical-align:middle;position:relative;overflow:hidden}
+.ub i{position:absolute;inset:0 auto 0 0;border-radius:99px}
+footer{margin-top:28px;font-size:12px;color:var(--mut);line-height:1.65}
+footer b{color:var(--ink2)}
+
+@media (max-width:1180px){
+  .kpis{grid-template-columns:repeat(3,1fr)}
+  .row3{grid-template-columns:1fr 1fr}
+  .row3 .panel:nth-child(3){grid-column:1/-1}
+}
+@media (max-width:760px){
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .row3,.row2{grid-template-columns:1fr}
+  .kpi .v{font-size:26px}
+  .barin{padding:12px 16px}
+  .ctrls{width:100%}
+}
+</style>
+
+</head>
+<body>
+<div class="bar"><div class="barin">
+  <div class="logo">
+    <h1><em>SKant</em> Portfolio Control</h1>
+    <p id="meta">loading</p>
+  </div>
+  <div class="ctrls">
+    <select class="sel" id="fCust" aria-label="Filter by customer"></select>
+    <select class="sel" id="fMkt" aria-label="Filter by market"></select>
+    <select class="sel" id="fStat" aria-label="Filter by status">
+      <option value="all">All status</option>
+      <option value="late">Needs attention</option>
+      <option value="ok">On track</option>
+    </select>
+    <span class="live"><i></i><span id="clock">--:--:--</span></span>
+    <button class="bt p" id="refresh">Refresh</button>
+  </div>
+</div></div>
+
+<div class="wrap">
+  <div class="kpis" id="kpis"></div>
+
+  <div class="row3">
+    <div class="panel">
+      <div class="ph"><h2>Schedule health</h2></div>
+      <div class="gauge">
+        <svg width="138" height="138" viewBox="0 0 138 138" role="img" aria-labelledby="gt">
+          <title id="gt">On-time index</title>
+          <circle cx="69" cy="69" r="56" fill="none" stroke="#eaf0f2" stroke-width="15"></circle>
+          <circle id="gArc" cx="69" cy="69" r="56" fill="none" stroke="#e0920d" stroke-width="15"
+            stroke-linecap="round" transform="rotate(-90 69 69)"></circle>
+          <text id="gPct" x="69" y="69" text-anchor="middle" dominant-baseline="central"
+            font-family="Plus Jakarta Sans,sans-serif" font-size="27" font-weight="800"
+            fill="#0d1b21" letter-spacing="-1">0%</text>
+          <text x="69" y="89" text-anchor="middle" font-family="IBM Plex Mono,monospace"
+            font-size="8" letter-spacing="1.4" fill="#5e7780">ON TIME</text>
+        </svg>
+        <div class="gw">
+          <div class="st" id="gWord">&nbsp;</div>
+          <p id="gNote">&nbsp;</p>
+        </div>
+      </div>
+      <div class="lgd" id="gBreak"></div>
+    </div>
+
+    <div class="panel">
+      <div class="ph"><h2>Stage status</h2><span class="sub" id="stTot"></span></div>
+      <div style="display:grid;place-items:center">
+        <svg width="172" height="172" viewBox="0 0 172 172" role="img" aria-labelledby="dt">
+          <title id="dt">Stage status distribution</title>
+          <g id="donut" transform="translate(86,86)"></g>
+          <text id="dMid" x="86" y="82" text-anchor="middle" dominant-baseline="central"
+            font-family="Plus Jakarta Sans,sans-serif" font-size="29" font-weight="800"
+            fill="#0d1b21" letter-spacing="-1.3">0</text>
+          <text x="86" y="104" text-anchor="middle" font-family="IBM Plex Mono,monospace"
+            font-size="8" letter-spacing="1.4" fill="#5e7780">STAGES</text>
+        </svg>
+      </div>
+      <div class="lgd" id="dLgd"></div>
+    </div>
+
+    <div class="panel" id="gPanel">
+      <div class="ph"><h2>Breakdown</h2>
+        <div class="tabs" role="tablist" aria-label="Group the breakdown by">
+          <button role="tab" aria-selected="true" data-g="dept">Dept</button>
+          <button role="tab" aria-selected="false" data-g="cust">Customer</button>
+          <button role="tab" aria-selected="false" data-g="mkt">Market</button>
+          <button role="tab" aria-selected="false" data-g="form">Form</button>
+        </div></div>
+      <p class="gcap" id="gTitle">&nbsp;</p>
+      <div class="glist" id="group"></div>
+    </div>
+  </div>
+
+  <div class="panel runway">
+    <div class="ph"><h2>Filing runway</h2><span class="sub" id="rwSub"></span></div>
+    <div class="rwscroll"><div class="rw">
+      <div class="rwhead"><span>Product</span><span>Target filing against forecast</span></div>
+      <div id="rwRows"></div>
+      <div class="rwticks"><span></span><div class="rwtk" id="rwTicks"></div></div>
+    </div></div>
+    <div class="rwkey">
+      <span><i class="tg"></i> Target, contracted</span>
+      <span><i style="background:#38a160"></i> Forecast on time</span>
+      <span><i style="background:#e0920d"></i> 1 to 20 days late</span>
+      <span><i style="background:#e24c4c"></i> Over 20 days late</span>
+      <span style="margin-left:auto">The bar between the two dots is the slip.</span>
+    </div>
+  </div>
+
+  <div class="row2">
+    <div class="panel">
+      <div class="ph"><h2>Needs attention today</h2><span class="sub">worst first</span></div>
+      <div class="att" id="att"></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><h2>Budget utilisation</h2><span class="sub">spend against cost budget</span></div>
+      <div class="mlist" id="money"></div>
+      <div class="msum" id="msum"></div>
+    </div>
+  </div>
+
+  <div class="row2">
+    <div class="panel">
+      <div class="ph"><h2>Stale records</h2>
+        <span class="sub">no milestone update in over 10 days</span></div>
+      <div id="stale"></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><h2>Unplanned pipeline</h2><span class="sub" id="tbcSub"></span></div>
+      <div id="tbc"></div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:12px">
+    <div class="ph"><h2>Full register</h2>
+      <input id="q" class="srch" type="search" placeholder="Search product, code, customer, stage"
+        aria-label="Search the register">
+      <span class="sub" id="regSub"></span></div>
+    <div class="regwrap"><table class="reg" id="reg"></table></div>
+  </div>
+
+  <footer id="foot"></footer>
+</div>
+<div id="tip" role="status"></div>
+
+<script>
+const TODAY = new Date(2026,9,8);
+const D=(y,m,d)=>new Date(y,m-1,d);
+const days=(a,b)=>Math.round((b-a)/864e5);
+const fmt=d=>d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'});
+const L=n=>'₹'+n.toFixed(1)+' L';
+const CR=n=>'₹'+(n/100).toFixed(2)+' Cr';
+const MARGIN=0.40;
+
+/* 19 active development programmes. Every figure on this page is derived from this list.
+   Names, customers and amounts are illustrative; the structure follows Scope v1.1 and the
+   product, milestone and costing sheets. */
+const P=[
+{cd:"SKPD-2024-031",n:"Rivaroxaban Tablets 10 mg",f:"Tablet",c:"Northvale Pharma",mk:"EU (DCP)",
+ dp:"Production",s:"Exhibit batch 2 manufacturing",sn:13,st:24,od:3,t:D(2027,3,11),fc:D(2027,4,1),
+ b:412.0,sp:465.3,up:2,bl:"Exhibit batch 1 failed content uniformity at 6 of 10 sampling points. Batch 2 scheduled, API re-ordered from the same DMF holder."},
+{cd:"SKPD-2024-018",n:"Dapagliflozin Tablets 10 mg",f:"Tablet",c:"Northvale Pharma",mk:"EU (DCP)",
+ dp:"QC",s:"6M accelerated stability pull",sn:17,st:24,od:1,t:D(2026,12,30),fc:D(2027,1,28),
+ b:486.0,sp:422.8,up:1,bl:"Stability chamber 3 down 18 days on a compressor replacement. Pull point missed, sample re-pulled 02 Oct."},
+{cd:"SKPD-2025-007",n:"Vildagliptin Tablets 50 mg",f:"Tablet",c:"Kestrel Labs",mk:"Brazil (ANVISA)",
+ dp:"ADL",s:"Analytical method validation",sn:9,st:24,od:2,t:D(2027,1,14),fc:D(2027,2,5),
+ b:310.0,sp:323.0,up:4,bl:"Known impurity above the ICH qualification threshold. Method revalidation and a toxicology justification both open."},
+{cd:"SKPD-2025-012",n:"Empagliflozin Tablets 25 mg",f:"Tablet",c:"Kestrel Labs",mk:"EU (DCP)",
+ dp:"ADL",s:"Dissolution profile comparison",sn:11,st:24,od:2,t:D(2027,2,2),fc:D(2027,2,16),
+ b:294.0,sp:274.0,up:3,bl:"f2 similarity failed against the RLD at pH 6.8. Formulation revision under way, two trial batches planned."},
+{cd:"SKPD-2024-022",n:"Azithromycin Tablets 500 mg",f:"Tablet",c:"Lumen Health",mk:"India (CDSCO)",
+ dp:"QC",s:"Finished product testing",sn:15,st:24,od:2,t:D(2026,11,20),fc:D(2026,12,8),
+ b:440.0,sp:334.0,up:6,bl:"Assay out of trend on exhibit batch 2. OOT investigation open, retest authorised."},
+{cd:"SKPD-2024-009",n:"Rosuvastatin Tablets 20 mg",f:"Tablet",c:"Brightmoor Pharma",mk:"EAEU",
+ dp:"QA",s:"Process validation protocol",sn:19,st:24,od:1,t:D(2026,12,12),fc:D(2026,12,24),
+ b:380.0,sp:293.0,up:9,bl:"PV protocol with the customer for sign-off since 29 Sep. No response in 9 days."},
+{cd:"SKPD-2023-044",n:"Montelukast Tablets 10 mg",f:"Tablet",c:"Lumen Health",mk:"EU (DCP)",
+ dp:"Regulatory",s:"Dossier compilation, Module 3",sn:21,st:24,od:0,t:D(2026,11,5),fc:D(2026,11,5),
+ b:248.0,sp:183.0,up:2,bl:""},
+{cd:"SKPD-2023-051",n:"Esomeprazole Capsules 40 mg",f:"Capsule",c:"SKant own",mk:"India (CDSCO)",
+ dp:"Regulatory",s:"Technology transfer to Unit 2",sn:20,st:25,od:0,t:D(2026,11,28),fc:D(2026,11,28),
+ b:360.0,sp:266.0,up:3,bl:""},
+{cd:"SKPD-2024-036",n:"Ticagrelor Tablets 90 mg",f:"Tablet",c:"Kestrel Labs",mk:"EU (DCP)",
+ dp:"QC",s:"3M accelerated stability pull",sn:16,st:24,od:1,t:D(2026,12,18),fc:D(2026,12,18),
+ b:400.0,sp:292.0,up:1,bl:""},
+{cd:"SKPD-2025-002",n:"Levetiracetam Tablets 500 mg",f:"Tablet",c:"Northvale Pharma",mk:"Brazil (ANVISA)",
+ dp:"Production",s:"In-process QC, exhibit batch",sn:14,st:24,od:1,t:D(2027,1,30),fc:D(2027,1,30),
+ b:420.0,sp:286.0,up:2,bl:""},
+{cd:"SKPD-2025-019",n:"Sitagliptin Tablets 100 mg",f:"Tablet",c:"Avanti Generics",mk:"EU (DCP)",
+ dp:"R and D",s:"Pre-formulation study",sn:4,st:24,od:0,t:D(2027,1,22),fc:D(2027,1,22),
+ b:260.0,sp:140.0,up:5,bl:""},
+{cd:"SKPD-2025-021",n:"Fluoxetine Capsules 20 mg",f:"Capsule",c:"Avanti Generics",mk:"India (CDSCO)",
+ dp:"F and D",s:"Formulation trial batch 3",sn:7,st:25,od:0,t:D(2027,2,19),fc:D(2027,2,19),
+ b:225.0,sp:160.0,up:1,bl:""},
+{cd:"SKPD-2024-040",n:"Ondansetron Injection 2 mg/ml",f:"Liquid",c:"Northvale Pharma",mk:"EU (DCP)",
+ dp:"QA",s:"Media fill validation",sn:18,st:29,od:0,t:D(2027,2,10),fc:D(2027,2,10),
+ b:580.0,sp:205.0,up:4,bl:""},
+{cd:"SKPD-2025-014",n:"Linagliptin Tablets 5 mg",f:"Tablet",c:"Avanti Generics",mk:"EAEU",
+ dp:"F and D",s:"Exhibit batch planning",sn:12,st:24,od:0,t:D(2027,2,26),fc:D(2027,2,26),
+ b:320.0,sp:215.0,up:7,bl:""},
+{cd:"SKPD-2025-026",n:"Duloxetine Capsules 30 mg",f:"Capsule",c:"Lumen Health",mk:"Brazil (ANVISA)",
+ dp:"ADL",s:"Analytical method development",sn:9,st:25,od:0,t:D(2027,3,18),fc:D(2027,3,18),
+ b:256.0,sp:155.0,up:12,bl:""},
+{cd:"SKPD-2025-029",n:"Apixaban Tablets 5 mg",f:"Tablet",c:"Brightmoor Pharma",mk:"EU (DCP)",
+ dp:"F and D",s:"Lab scale optimisation",sn:10,st:24,od:0,t:D(2027,3,30),fc:D(2027,3,30),
+ b:340.0,sp:205.0,up:3,bl:""},
+{cd:"SKPD-2025-033",n:"Tamsulosin Capsules 0.4 mg",f:"Capsule",c:"Brightmoor Pharma",mk:"India (CDSCO)",
+ dp:"R and D",s:"RLD characterisation",sn:6,st:25,od:0,t:D(2027,4,2),fc:D(2027,4,2),
+ b:234.0,sp:120.0,up:15,bl:""},
+{cd:"SKPD-2025-038",n:"Sertraline Tablets 50 mg",f:"Tablet",c:"SKant own",mk:"EAEU",
+ dp:"ADL",s:"Analytical method development",sn:8,st:24,od:1,t:D(2027,4,15),fc:D(2027,4,15),
+ b:210.0,sp:125.0,up:21,bl:""},
+{cd:"SKPD-2025-041",n:"Pantoprazole Tablets 40 mg",f:"Tablet",c:"SKant own",mk:"India (CDSCO)",
+ dp:"R and D",s:"API characterisation",sn:3,st:24,od:0,t:D(2027,5,8),fc:D(2027,5,8),
+ b:195.0,sp:80.0,up:18,bl:""},
+];
+
+/* 31 enquiries with a customer and a name and no plan behind them. */
+const TBC=[
+["Empagliflozin + Metformin FDC Tab","Kestrel Labs",214],["Dapagliflozin + Sitagliptin FDC Tab","Northvale Pharma",198],
+["Rivaroxaban Tablets 20 mg","Northvale Pharma",186],["Nebivolol Tablets 5 mg","Lumen Health",171],
+["Febuxostat Tablets 80 mg","Avanti Generics",166],["Teneligliptin Tablets 20 mg","SKant own",159],
+["Vortioxetine Tablets 10 mg","Brightmoor Pharma",148],["Dapoxetine Tablets 30 mg","Lumen Health",141],
+["Lurasidone Tablets 40 mg","Kestrel Labs",133],["Sacubitril + Valsartan Tab","Northvale Pharma",127],
+["Apixaban Tablets 2.5 mg","Brightmoor Pharma",119],["Edoxaban Tablets 60 mg","Kestrel Labs",112],
+["Ertugliflozin Tablets 5 mg","Avanti Generics",104],["Bempedoic Acid Tablets 180 mg","Northvale Pharma",97],
+["Tofacitinib Tablets 5 mg","Lumen Health",91],["Baricitinib Tablets 2 mg","Kestrel Labs",84],
+["Ticagrelor Tablets 60 mg","SKant own",78],["Rosuvastatin + Ezetimibe Tab","Brightmoor Pharma",71],
+["Azelastine Nasal Spray","Avanti Generics",66],["Olopatadine Eye Drops","Lumen Health",61],
+["Mometasone Nasal Spray","Northvale Pharma",55],["Bilastine Tablets 20 mg","Kestrel Labs",49],
+["Fexofenadine Suspension","Avanti Generics",44],["Ondansetron Oral Film","SKant own",38],
+["Rizatriptan ODT 10 mg","Brightmoor Pharma",33],["Lacosamide Tablets 100 mg","Lumen Health",28],
+["Perampanel Tablets 4 mg","Kestrel Labs",23],["Brivaracetam Tablets 50 mg","Northvale Pharma",19],
+["Cariprazine Capsules 1.5 mg","Avanti Generics",14],["Esketamine Nasal Spray","SKant own",9],
+["Semaglutide Oral Tablets 7 mg","Northvale Pharma",4],
+];
+
+/* ---- volume load ------------------------------------------------------------
+   The 19 above are written by hand. The rest of the register is generated from a
+   fixed seed, so the page looks the same on every machine while carrying enough
+   rows to show how it behaves at volume. ---------------------------------- */
+const rnd=(s=>()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);
+  t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296})(20261008);
+const pick=a=>a[Math.floor(rnd()*a.length)];
+const between=(a,b)=>a+Math.floor(rnd()*(b-a+1));
+
+const MOL=["Atorvastatin","Ezetimibe","Fenofibrate","Clopidogrel","Prasugrel","Dabigatran",
+"Telmisartan","Olmesartan","Valsartan","Amlodipine","Nebivolol","Metoprolol","Bisoprolol",
+"Glimepiride","Pioglitazone","Saxagliptin","Teneligliptin","Ertugliflozin","Metformin SR",
+"Levofloxacin","Moxifloxacin","Cefixime","Amoxicillin + Clavulanate","Linezolid","Cefuroxime",
+"Fexofenadine","Bilastine","Levocetirizine","Desloratadine","Rabeprazole","Domperidone",
+"Escitalopram","Mirtazapine","Aripiprazole","Quetiapine","Lurasidone","Cariprazine",
+"Lacosamide","Brivaracetam","Perampanel","Pregabalin","Gabapentin","Memantine","Donepezil",
+"Dutasteride","Tadalafil","Febuxostat","Tofacitinib","Rizatriptan","Sumatriptan",
+"Deflazacort","Hydroxychloroquine","Colchicine","Ursodeoxycholic Acid","Silodosin"];
+const FORMS=[["Tablets",24,[200,520]],["Film-coated Tablets",24,[220,560]],["Capsules",25,[210,500]],
+ ["Orally Disintegrating Tablets",26,[260,580]],["Oral Suspension",26,[240,540]],
+ ["Injection",29,[420,840]],["Nasal Spray",28,[380,760]],["Eye Drops",28,[360,700]],
+ ["Topical Cream",25,[200,460]]];
+const STRENGTH=["2.5 mg","5 mg","10 mg","20 mg","25 mg","40 mg","50 mg","80 mg","100 mg",
+ "180 mg","250 mg","500 mg","1 mg/ml","2 mg/ml","0.05 pct"];
+const CUSTS=["Northvale Pharma","Kestrel Labs","Lumen Health","Brightmoor Pharma",
+ "Avanti Generics","Castleford Health","Meridian Generics","SKant own"];
+const MKTS=["EU (DCP)","EU (MRP)","US (ANDA)","Brazil (ANVISA)","India (CDSCO)","EAEU",
+ "South Africa (SAHPRA)","GCC"];
+const STAGES=["Literature and patent search","API vendor identification","API characterisation",
+"Pre-formulation study","RLD procurement","RLD characterisation","Formulation trial batch 1",
+"Formulation trial batch 3","Lab scale optimisation","Analytical method development",
+"Analytical method validation","Dissolution profile comparison","Exhibit batch planning",
+"Exhibit batch 1 manufacturing","In-process QC, exhibit batch","Finished product testing",
+"3M accelerated stability pull","6M accelerated stability pull","Long term stability initiation",
+"Process validation protocol","Process validation execution","Technology transfer to Unit 2",
+"Dossier compilation, Module 3","Regulatory submission"];
+const BLOCK={
+ "QC":["Stability chamber out of range for 9 days, pull point missed.",
+   "Assay out of trend on exhibit batch 2. OOT investigation open.",
+   "Dissolution failing at the 45 minute point on two of six vessels.",
+   "Related substance above specification on the 3M pull."],
+ "ADL":["Known impurity above the ICH qualification threshold.",
+   "f2 similarity failed against the RLD at pH 6.8.",
+   "Method precision outside acceptance on the second analyst.",
+   "Column lot change has forced a method re-verification."],
+ "Production":["Exhibit batch failed content uniformity at 4 of 10 points.",
+   "Compression machine requalification overdue since 21 Sep.",
+   "Granulation end point not reproducible across three trials.",
+   "Blend uniformity RSD above 5 percent, re-blend authorised."],
+ "QA":["PV protocol with the customer for sign-off, no response.",
+   "Deviation raised on exhibit batch 2 still open.",
+   "Change control for the site transfer not yet approved.",
+   "Vendor audit of the API source still pending."],
+ "Regulatory":["Module 3 waiting on the stability summary.",
+   "Agency query on the impurity profile unanswered.",
+   "CEP from the API vendor not yet granted.",
+   "Legalisation of the GMP certificate pending at the consulate."],
+ "F and D":["Trial batch 3 failed friability at 1.2 percent.",
+   "Coating defect at pan scale, recipe under revision.",
+   "Taste masking rejected by the sensory panel."],
+ "R and D":["API vendor has not shared the open part of the DMF.",
+   "RLD procurement from the EU market delayed at customs.",
+   "Patent clearance opinion still with external counsel."]};
+const DEPT_FOR=i=>i<6?"R and D":i<9?"F and D":i<12?"ADL":i<15?"Production":
+  i<19?"QC":i<22?"QA":"Regulatory";
+
+for(let i=0;i<45;i++){
+  const mol=MOL[i%MOL.length], [fm,tot,rng]=pick(FORMS);
+  const sn=between(2,tot-2), dp=DEPT_FOR(sn);
+  const hasOd=rnd()<0.26, od=hasOd?between(1,3):0;
+  const slip=hasOd&&rnd()<0.62?between(4,48):0;
+  const t=new Date(TODAY); t.setDate(t.getDate()+between(28,760));
+  const fc=new Date(t); fc.setDate(fc.getDate()+slip);
+  const b=Math.round(between(rng[0],rng[1])/2)*2;
+  let ratio=sn/tot*(0.82+rnd()*0.46);
+  if(rnd()<0.10) ratio=1.02+rnd()*0.26;           // a genuine overrun
+  else if(rnd()<0.12) ratio=0.82+rnd()*0.16;      // close to the line
+  P.push({cd:`SKPD-${between(2023,2025)}-${String(between(1,99)).padStart(3,'0')}`,
+    n:`${mol} ${fm.replace('Tablets','Tab').replace('Capsules','Cap')} ${pick(STRENGTH)}`,
+    f:fm, c:pick(CUSTS), mk:pick(MKTS), dp, s:STAGES[Math.min(sn,STAGES.length-1)],
+    sn, st:tot, od, t, fc, b, sp:Math.round(b*ratio*10)/10,
+    up: rnd()<0.14?between(11,34):between(0,9),
+    bl: od? pick(BLOCK[dp]||BLOCK["QC"]) : ""});
+}
+/* a few more enquiries so the unplanned pipeline is realistic too */
+["Semaglutide Oral Tab 14 mg","Empagliflozin + Linagliptin FDC","Finerenone Tablets 10 mg",
+ "Vericiguat Tablets 2.5 mg","Upadacitinib ER Tablets 15 mg","Risdiplam Oral Solution",
+ "Tirzepatide Injection"].forEach((n,i)=>TBC.push([n,pick(CUSTS),between(3,120)]));
+
+P.forEach(p=>{p.slip=days(p.t,p.fc); p.util=p.sp/p.b*100; p.sell=p.b/(1-MARGIN);
+  p.projCost=Math.max(p.b,p.sp); p.projMargin=(p.sell-p.projCost)/p.sell*100;
+  p.sev=p.slip>20?1:p.slip>0?2:p.util>100?1:p.util>80?2:0;});
+
+let SORT={k:'sev',dir:1}, Q='';
+
+let G='dept',CUST='all',MKT='all',STAT='all';
+const el=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cur=()=>P.filter(p=>(CUST==='all'||p.c===CUST)&&(MKT==='all'||p.mk===MKT)&&
+  (STAT==='all'||(STAT==='late'?(p.slip>0||p.util>80):(p.slip<=0&&p.util<=80))));
+
+const tip=el('tip');
+function bind(node,html){
+  node.addEventListener('pointerenter',e=>{tip.innerHTML=html;tip.classList.add('on');move(e)});
+  node.addEventListener('pointermove',move);
+  node.addEventListener('pointerleave',()=>tip.classList.remove('on'));
+}
+function move(e){const w=tip.offsetWidth||220;
+  tip.style.left=Math.max(10,Math.min(e.clientX+14,innerWidth-w-10))+'px';
+  tip.style.top=Math.max(10,e.clientY-tip.offsetHeight-12)+'px';}
+
+function kpis(A){
+  const late=A.filter(p=>p.slip>0).length, od=A.reduce((a,p)=>a+p.od,0);
+  const o80=A.filter(p=>p.util>80).length, o100=A.filter(p=>p.util>100).length;
+  const stale=A.filter(p=>p.up>10).length;
+  const worst=A.slice().sort((a,b)=>b.slip-a.slip)[0];
+  const deptsLate=new Set(A.filter(p=>p.od).map(p=>p.dp)).size;
+  const cards=[
+    ['Active programmes',A.length,`plus <b>${TBC.length}</b> unplanned enquiries`,'var(--blue)'],
+    ['Stages overdue',od,od?`sitting with <b>${deptsLate}</b> departments`:'nothing past its date',od?'var(--red)':'var(--green)'],
+    ['Filing at risk',late,late?'contracted date <b>will move</b>':'every filing holds',late?'var(--red)':'var(--green)'],
+    ['Budget over 80%',o80,o100?`<b>${o100}</b> already past 100%`:'none past 100%',o80?'var(--amber)':'var(--green)'],
+    ['Stale records',stale,stale?'no update in <b>over 10 days</b>':'all current','var(--amber)'],
+    ['Worst slip',(Math.max(0,...A.map(p=>p.slip)))+' d',
+      worst&&worst.slip>0?`<b>${esc(worst.n.split(' ')[0])}</b>, held by ${esc(worst.dp)}`:'no product is late','var(--red)'],
+  ];
+  el('kpis').innerHTML=cards.map(([k,v,d,rail])=>
+    `<div class="kpi" style="--rail:${rail}"><div class="k">${k}</div><div class="v">${v}</div>
+     <div class="d">${d}</div></div>`).join('');
+}
+
+function gauge(A){
+  const on=A.filter(p=>p.slip<=0).length, pct=A.length?on/A.length*100:0;
+  const C=2*Math.PI*56, col=pct>=85?'#38a160':pct>=65?'#e0920d':'#e24c4c';
+  const arc=el('gArc'); arc.style.stroke=col;
+  arc.setAttribute('stroke-dasharray',`${(C*pct/100).toFixed(1)} ${C.toFixed(1)}`);
+  el('gPct').textContent=Math.round(pct)+'%';
+  const w=pct>=85?['Healthy','var(--greenink)']:pct>=65?['At risk','var(--amberink)']:['Behind','var(--redink)'];
+  el('gWord').textContent=w[0]; el('gWord').style.color=w[1];
+  el('gNote').innerHTML=A.length
+    ?`<b>${on}</b> of <b>${A.length}</b> programmes will hit the filing date they were contracted on.`
+    :'Nothing matches this filter.';
+  const late=A.filter(p=>p.slip>0), b1=late.filter(p=>p.slip>20).length;
+  el('gBreak').innerHTML=[['#38a160','Forecast on time',on],
+    ['#e0920d','Late by 20 days or less',late.length-b1],['#e24c4c','Late by more than 20 days',b1]]
+    .map(([c,t,v])=>`<div><i style="background:${c}"></i><span>${t}</span><b>${v}</b>
+      <span class="pc">${A.length?Math.round(v/A.length*100):0}%</span></div>`).join('');
+}
+
+function donut(A){
+  const done=A.reduce((a,p)=>a+(p.sn-p.od),0), od=A.reduce((a,p)=>a+p.od,0);
+  const live=A.filter(p=>p.od===0).length;
+  const todo=A.reduce((a,p)=>a+p.st,0)-done-od-live;
+  const seg=[['Complete',done,'#38a160'],['Overdue',od,'#e24c4c'],
+    ['In progress',live,'#2490ef'],['Not started',Math.max(0,todo),'#8da0a8']].filter(s=>s[1]>0);
+  const tot=seg.reduce((a,s)=>a+s[1],0)||1, R=62,W=19,g=el('donut'); g.innerHTML='';
+  let ang=-Math.PI/2;
+  seg.forEach(([t,v,c])=>{
+    const sweep=v/tot*2*Math.PI, gap=0.018, a0=ang+gap/2, a1=ang+sweep-gap/2;
+    const pa=document.createElementNS('http://www.w3.org/2000/svg','path');
+    pa.setAttribute('d',`M ${Math.cos(a0)*R} ${Math.sin(a0)*R} A ${R} ${R} 0 ${a1-a0>Math.PI?1:0} 1 ${Math.cos(a1)*R} ${Math.sin(a1)*R}`);
+    pa.setAttribute('fill','none');pa.setAttribute('stroke',c);pa.setAttribute('stroke-width',W);
+    bind(pa,`<b>${t}</b><span class="m">${v} of ${tot} stages</span>${Math.round(v/tot*100)}% of the plan`);
+    g.appendChild(pa); ang+=sweep;
+  });
+  el('dMid').textContent=tot; el('stTot').textContent=`${A.length} programmes`;
+  el('dLgd').innerHTML=seg.map(([t,v,c])=>`<div><i style="background:${c}"></i><span>${t}</span>
+    <b>${v}</b><span class="pc">${Math.round(v/tot*100)}%</span></div>`).join('');
+}
+
+function group(A){
+  const key={dept:'dp',cust:'c',mkt:'mk',form:'f'}[G];
+  const m=new Map(); A.forEach(p=>{if(!m.has(p[key]))m.set(p[key],[]);m.get(p[key]).push(p)});
+  el('gTitle').innerHTML={
+    dept:`<b>${m.size} departments</b> holding a live stage, worst first`,
+    cust:`<b>${m.size} customers</b> in this view, worst first`,
+    mkt:`<b>${m.size} markets</b> in this view, worst first`,
+    form:`<b>${m.size} dosage forms</b>, each on its own stage template`}[G];
+  const rows=[...m.entries()].map(([k,ps])=>({k,ps,
+    prog:ps.reduce((a,p)=>a+p.sn/p.st,0)/ps.length*100,
+    od:ps.reduce((a,p)=>a+p.od,0), late:ps.filter(p=>p.slip>0).length,
+    bud:ps.reduce((a,p)=>a+p.b,0)}))
+    .sort((a,b)=>(b.od-a.od)||(b.late-a.late)||(b.prog-a.prog));
+  el('group').innerHTML=rows.map(r=>{
+    const tag=r.od?`<span class="tag r tag-end">${r.od} overdue</span>`
+      :r.late?`<span class="tag a tag-end">${r.late} slipping</span>`
+      :`<span class="tag g tag-end">clear</span>`;
+    return `<div class="gi"><div class="t"><b>${esc(r.k)}</b>${tag}</div>
+      <div class="m"><b>${r.prog.toFixed(0)}%</b> through plan · ${r.ps.length} programme${r.ps.length>1?'s':''}
+       · ${r.ps.reduce((a,p)=>a+p.st,0)} stages · ${CR(r.bud)}</div>
+      <div class="trk"><i style="width:${r.prog.toFixed(1)}%;background:var(--brand)"></i></div></div>`;
+  }).join('')||`<p style="color:var(--mut);font-size:13px">Nothing matches this filter.</p>`;
+}
+
+function runway(A){
+  const end=new Date(TODAY); end.setDate(end.getDate()+270);
+  const span=days(TODAY,end);
+  const all=A.filter(p=>p.t<=end).sort((a,b)=>a.fc-b.fc);
+  const list=all.slice(0,22);
+  const x=d=>Math.max(0,Math.min(100,days(TODAY,d)/span*100));
+  el('rwSub').textContent=`${list.length} of ${all.length} filings due by ${fmt(end)}`
+    +(all.length>list.length?`, soonest first`:'');
+  el('rwRows').innerHTML=list.map(p=>{
+    const xt=x(p.t),xf=x(p.fc),lo=Math.min(xt,xf),w=Math.abs(xf-xt);
+    const cls=p.slip>20?'late':p.slip>0?'near':'';
+    return `<div class="rwrow" data-cd="${esc(p.cd)}">
+      <div class="rwname"><b>${esc(p.n)}</b><span>${esc(p.cd)} · ${esc(p.dp)}</span></div>
+      <div class="rwtrack"><div class="rwaxis"></div>
+        ${p.slip>0?`<div class="rwslip ${p.slip>20?'bad':''}" style="left:${lo}%;width:${w}%"></div>`:''}
+        <div class="rwdot target" style="left:${xt}%"></div>
+        <div class="rwdot fc ${cls}" style="left:${xf}%"></div></div></div>`;
+  }).join('');
+  el('rwRows').querySelectorAll('.rwrow').forEach((row,i)=>{
+    const p=P.find(q=>q.cd===row.dataset.cd);
+    bind(row,`<b>${esc(p.n)}</b><span class="m">${esc(p.cd)} · ${esc(p.c)} · ${esc(p.mk)}</span>
+      Target ${fmt(p.t)}, forecast ${fmt(p.fc)}.
+      ${p.slip>0?`Slipping <b>${p.slip} days</b>.`:'Holding the contracted date.'}<br>
+      Stage ${p.sn} of ${p.st}: ${esc(p.s)}<br>
+      ${L(p.b)} budget · ${L(p.sp)} spent · <b>${p.util.toFixed(0)}%</b>
+      ${p.bl?'<br><br>'+esc(p.bl):''}`);
+    const n=document.createElement('div'); n.className='rwnow'+(i===0?' first':'');
+    n.style.left=x(TODAY)+'%'; row.querySelector('.rwtrack').appendChild(n);
+  });
+  const tk=el('rwTicks'); tk.innerHTML='';
+  for(let m=0;m<12;m++){const d=new Date(TODAY.getFullYear(),TODAY.getMonth()+m,1);
+    if(d>end||d<TODAY)continue;
+    const s=document.createElement('span'); s.style.left=x(d)+'%';
+    s.textContent=d.toLocaleDateString('en-GB',{month:'short'}).toUpperCase()
+      +(d.getMonth()===0?" '"+String(d.getFullYear()).slice(2):''); tk.appendChild(s);}
+}
+
+const COLS=[['n','Product',0],['c','Customer',0],['mk','Market',0],['f','Form',0],
+ ['dp','Owner',0],['s','Live stage',0],['sn','Stage',1],['t','Target',1],
+ ['slip','Slip',1],['b','Budget',1],['util','Used',1],['up','Updated',1],['sev','Status',1]];
+function register(A){
+  const q=Q.trim().toLowerCase();
+  let rows=A.filter(p=>!q||[p.n,p.cd,p.c,p.mk,p.dp,p.s].some(v=>v.toLowerCase().includes(q)));
+  const k=SORT.k, d=SORT.dir;
+  rows=rows.slice().sort((a,b)=>{
+    let va=a[k], vb=b[k];
+    if(k==='sev'){va=a.sev===0?9:a.sev; vb=b.sev===0?9:b.sev;}
+    if(va instanceof Date){va=+va; vb=+vb;}
+    if(typeof va==='string') return d*va.localeCompare(vb);
+    return d*(va-vb);
+  });
+  el('regSub').textContent=`${rows.length} of ${A.length} programmes`;
+  const head=COLS.map(([key,lab,num])=>
+    `<th data-k="${key}" class="${SORT.k===key?'on':''}" style="${num?'text-align:right':''}">${lab}${
+      SORT.k===key?`<span class="ar">${SORT.dir>0?'↑':'↓'}</span>`:''}</th>`).join('');
+  el('reg').innerHTML=`<thead><tr>${head}</tr></thead><tbody>${rows.map(p=>{
+    const col=p.util>100?'#e24c4c':p.util>80?'#e0920d':'#38a160';
+    const pill=p.od?`<span class="tag r">${p.od} overdue</span>`
+      :p.slip>0?`<span class="tag a">${p.slip} d slip</span>`
+      :p.util>100?`<span class="tag r">over budget</span>`
+      :p.up>10?`<span class="tag s">stale</span>`:`<span class="tag g">on track</span>`;
+    return `<tr><td><span class="pn">${esc(p.n)}</span><span class="cdx">${esc(p.cd)}</span></td>
+      <td>${esc(p.c)}</td><td>${esc(p.mk)}</td><td>${esc(p.f)}</td><td>${esc(p.dp)}</td>
+      <td style="max-width:210px;overflow:hidden;text-overflow:ellipsis">${esc(p.s)}</td>
+      <td class="num">${p.sn}/${p.st}</td><td class="num">${fmt(p.t)}</td>
+      <td class="num" style="color:${p.slip>20?'var(--redink)':p.slip>0?'var(--amberink)':'var(--mut)'}">${p.slip>0?p.slip+' d':'—'}</td>
+      <td class="num">${L(p.b)}</td>
+      <td class="num"><span class="ub"><i style="width:${Math.min(100,p.util)}%;background:${col}"></i></span>
+        <span style="margin-left:7px">${p.util.toFixed(0)}%</span></td>
+      <td class="num" style="color:${p.up>10?'var(--amberink)':'var(--mut)'}">${p.up} d</td>
+      <td>${pill}</td></tr>`;}).join('')}</tbody>`;
+  el('reg').querySelectorAll('th').forEach(th=>th.onclick=()=>{
+    const key=th.dataset.k;
+    SORT = SORT.k===key ? {k:key,dir:-SORT.dir} : {k:key,dir:['n','c','mk','f','dp','s'].includes(key)?1:-1};
+    register(cur());
+  });
+}
+
+function attention(A){
+  const rank=A.filter(p=>p.sev>0).sort((a,b)=>(a.sev-b.sev)||(b.slip-a.slip)||(b.util-a.util)).slice(0,6);
+  el('att').innerHTML=rank.length?rank.map((p,i)=>{
+    const why=p.bl?esc(p.bl)
+      :p.slip>0?`Filing slips to <b>${fmt(p.fc)}</b>, held by <b>${esc(p.dp)}</b>.`
+      :`On schedule, but spend is <b>${p.util.toFixed(0)}%</b> of the cost budget. Margin falls to <b>${p.projMargin.toFixed(0)}%</b>.`;
+    const big=p.slip>0?[p.slip+'d','slip']:[p.util.toFixed(0)+'%','used'];
+    return `<div class="ai sev${p.sev}"><div class="rk">${i+1}</div>
+      <div><div class="nm">${esc(p.n)}</div><div class="wy">${why}</div></div>
+      <div class="rt"><div class="n">${big[0]}</div><div class="u">${big[1]}</div></div></div>`;
+  }).join(''):`<p style="color:var(--mut);font-size:13px">Nothing needs attention in this view.</p>`;
+}
+
+function money(A){
+  const top=A.slice().sort((a,b)=>b.util-a.util).slice(0,7);
+  el('money').innerHTML=top.map(p=>{
+    const over=p.util>100, col=over?'#e24c4c':p.util>80?'#e0920d':'#38a160';
+    const ink=over?'var(--redink)':p.util>80?'var(--amberink)':'var(--greenink)';
+    return `<div class="mi"><div class="t"><b>${esc(p.n)}</b>
+      <span class="amt">${L(p.sp)} / ${L(p.b)}</span>
+      <span class="pc" style="color:${ink}">${p.util.toFixed(0)}%</span></div>
+      <div class="mbar"><i style="width:${Math.min(100,p.util)}%;background:${col}"></i>
+      ${over?`<u style="left:${(100/p.util*100).toFixed(1)}%"></u>`:''}</div></div>`;
+  }).join('');
+  const b=A.reduce((a,p)=>a+p.b,0), s=A.reduce((a,p)=>a+p.sp,0);
+  const sell=A.reduce((a,p)=>a+p.sell,0), proj=A.reduce((a,p)=>a+p.projCost,0);
+  el('msum').innerHTML=[['Cost budget',CR(b)],['Spent to date',CR(s)],
+    ['Projected margin',sell?((sell-proj)/sell*100).toFixed(1)+'%':'—']]
+    .map(([k,v])=>`<div><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
+  el('foot').innerHTML=`<b>${A.length} programmes</b> in view · cost budget <b>${CR(b)}</b> ·
+    spent <b>${CR(s)}</b>, ${(s/b*100).toFixed(0)}% · quoted at 40% margin, projected
+    <b>${((sell-proj)/sell*100).toFixed(1)}%</b>. ${(()=>{const o=A.filter(p=>p.util>100).length;
+      return o===0?'Nothing is past its cost budget, so the quoted margin holds.'
+        :o===1?'One programme past its cost budget is what moves that number.'
+        :`The ${o} programmes past their cost budget are what move that number.`;})()}<br>
+    Every figure here is computed from one list of <b>${P.length} programmes</b> and
+    <b>${TBC.length} enquiries</b>, so no two panels can disagree. The register is loaded well past
+    SKant's current 50 products on purpose, to show how the screen reads at volume. Names and
+    amounts are illustrative; 19 programmes are written by hand from the scope and costing sheets,
+    the rest are generated from a fixed seed so the page looks the same on every machine.`;
+}
+
+function stale(A){
+  const rows=A.filter(p=>p.up>10).sort((a,b)=>b.up-a.up);
+  el('stale').innerHTML=rows.length?`<table class="tt">
+    <tr><th>Programme</th><th>Owner</th><th class="num">Last update</th></tr>
+    ${rows.map(p=>`<tr><td><b>${esc(p.n)}</b><div class="sm">${esc(p.cd)} · stage ${p.sn} of ${p.st}</div></td>
+      <td>${esc(p.dp)}<div class="sm">${esc(p.c)}</div></td>
+      <td class="num"><span class="tag ${p.up>14?'r':'a'}">${p.up} days</span></td></tr>`).join('')}
+    </table>
+    <p style="font-size:11.5px;color:var(--mut);margin:12px 0 0;line-height:1.5">
+      A record nobody has touched in three weeks is not green, it is unknown.
+      These ${rows.length} are the ones most likely to surprise someone at the next review.</p>`
+    :`<p style="color:var(--mut);font-size:13px">Every programme in this view was updated in the last 10 days.</p>`;
+}
+
+function tbc(){
+  const by=new Map(); TBC.forEach(([n,c])=>by.set(c,(by.get(c)||0)+1));
+  const oldest=TBC.slice().sort((a,b)=>b[2]-a[2]).slice(0,5);
+  el('tbcSub').textContent=`${TBC.length} enquiries, no plan behind them`;
+  el('tbc').innerHTML=`<table class="tt">
+    <tr><th>Longest waiting</th><th>Customer</th><th class="num">Open</th></tr>
+    ${oldest.map(([n,c,d])=>`<tr><td><b>${esc(n)}</b></td><td>${esc(c)}</td>
+      <td class="num"><span class="tag s">${d} days</span></td></tr>`).join('')}
+    </table>
+    <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:13px">
+      ${[...by.entries()].sort((a,b)=>b[1]-a[1]).map(([c,n])=>
+        `<span class="tag s">${esc(c)} ${n}</span>`).join('')}
+    </div>
+    <p style="font-size:11.5px;color:var(--mut);margin:12px 0 0;line-height:1.5">
+      These exist as records so nothing is lost, and they are kept out of every percentage
+      on this page. Counting them would drag the portfolio average down by a number
+      that means nothing.</p>`;
+}
+
+function render(){
+  const A=cur();
+  el('meta').textContent=`Q3 FY27 · ${P.length} active + ${TBC.length} unplanned · `
+    +(CUST==='all'?'all customers':CUST)+(MKT==='all'?'':' · '+MKT);
+  kpis(A);gauge(A);donut(A);group(A);runway(A);attention(A);money(A);stale(A);tbc();register(A);
+}
+
+const custs=[...new Set(P.map(p=>p.c))].sort();
+const mkts=[...new Set(P.map(p=>p.mk))].sort();
+el('fCust').innerHTML='<option value="all">All customers</option>'+
+  custs.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
+el('fMkt').innerHTML='<option value="all">All markets</option>'+
+  mkts.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
+el('fCust').onchange=e=>{CUST=e.target.value;render()};
+el('fMkt').onchange=e=>{MKT=e.target.value;render()};
+el('fStat').onchange=e=>{STAT=e.target.value;render()};
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tabs button').forEach(x=>x.setAttribute('aria-selected','false'));
+  b.setAttribute('aria-selected','true'); G=b.dataset.g; render();
+  const g=el('group'); g.classList.remove('flash'); void g.offsetWidth; g.classList.add('flash');});
+el('refresh').onclick=()=>{el('refresh').textContent='Refreshed'; render();
+  setTimeout(()=>el('refresh').textContent='Refresh',900)};
+let qt; el('q').oninput=e=>{clearTimeout(qt); qt=setTimeout(()=>{Q=e.target.value;register(cur())},140)};
+const clock=()=>el('clock').textContent=new Date().toLocaleTimeString('en-GB',{hour12:false});
+clock(); setInterval(clock,1000); render();
+</script>
+
+</body>
+</html>
