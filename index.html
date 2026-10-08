@@ -32,6 +32,9 @@ img{max-width:100%}
   --r:18px;
 }
 *{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+#top,#sec-health,#sec-runway,#sec-act,#sec-watch,#sec-reg{scroll-margin-top:var(--anchor,150px)}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--fs);font-size:14.5px;
   line-height:1.55;-webkit-font-smoothing:antialiased}
 .wrap{max-width:1380px;margin:0 auto;padding-inline:16px;padding-block:22px 64px}
@@ -988,13 +991,30 @@ el('clear').onclick=()=>{CUST=MKT='all'; STAT='all'; GQ=''; Q='';
 const navLinks=[...document.querySelectorAll('#nav a')];
 const SECS=['top','sec-health','sec-runway','sec-act','sec-watch','sec-reg']
   .map(id=>el(id)).filter(Boolean);
+const bar=document.querySelector('.bar');
+// One number drives both the jump and the highlight, so they can never disagree.
+function offset(){
+  const stuck=getComputedStyle(bar).position==='sticky'?bar.offsetHeight:0;
+  return stuck+20;
+}
+function syncOffset(){document.documentElement.style.setProperty('--anchor',offset()+'px')}
+const topOf=n=>n.getBoundingClientRect().top+scrollY;
 function spy(){
-  const y=scrollY+140; let cur=SECS[0];
-  for(const n of SECS) if(n.offsetTop<=y) cur=n;
+  const y=scrollY+offset()+8; let cur=SECS[0];
+  for(const n of SECS) if(topOf(n)<=y) cur=n;
   navLinks.forEach(a=>a.classList.toggle('on',a.dataset.s===cur.id));
 }
+navLinks.forEach(a=>a.addEventListener('click',e=>{
+  const n=el(a.dataset.s); if(!n) return;
+  e.preventDefault();
+  const y=Math.max(0,topOf(n)-offset());
+  scrollTo({top:y,behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'});
+  navLinks.forEach(x=>x.classList.toggle('on',x===a));
+  history.replaceState(null,'','#'+a.dataset.s);
+}));
 addEventListener('scroll',()=>requestAnimationFrame(spy),{passive:true});
-addEventListener('resize',spy); spy();
+addEventListener('resize',()=>{syncOffset();spy()});
+syncOffset(); spy();
 const clock=()=>el('clock').textContent=new Date().toLocaleTimeString('en-GB',{hour12:false});
 clock(); setInterval(clock,1000); render();
 </script>
