@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="SKant Healthcare project and budget tracking dashboard, working prototype by Atrina Technologies.">
 <meta name="robots" content="noindex">
+<meta name="theme-color" content="#f1f3f9">
+<meta name="format-detection" content="telephone=no">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Crect width='36' height='36' rx='10' fill='%234338ca'/%3E%3Crect x='8' y='20' width='4.5' height='8' rx='2' fill='%23fff' opacity='.65'/%3E%3Crect x='15.75' y='13' width='4.5' height='15' rx='2' fill='%23fff'/%3E%3Crect x='23.5' y='8' width='4.5' height='20' rx='2' fill='%23f0a52c'/%3E%3C/svg%3E">
 <style>
 :root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -36,7 +38,8 @@ html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 #top,#sec-health,#sec-runway,#sec-act,#sec-watch,#sec-reg{scroll-margin-top:var(--anchor,150px)}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--fs);font-size:14.5px;
-  line-height:1.55;-webkit-font-smoothing:antialiased}
+  line-height:1.55;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%;
+  text-size-adjust:100%}
 .wrap{max-width:1380px;margin:0 auto;padding-inline:16px;padding-block:22px 64px}
 .tnum{font-variant-numeric:tabular-nums}
 
@@ -149,7 +152,7 @@ button.bt.p:hover{background:var(--brand2);border-color:var(--brand2);color:var(
 .tag.s{color:var(--mut);background:var(--slatesoft)}
 
 .runway{margin-top:12px}
-.rwscroll{overflow-x:auto;overflow-y:hidden}
+.rwscroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}
 .rw{min-width:700px}
 .rwhead,.rwrow,.rwticks{display:grid;grid-template-columns:232px 1fr;gap:16px}
 .rwhead{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
@@ -239,7 +242,8 @@ table.tt .sm{font-size:11px;color:var(--mut)}
   border:1px solid var(--line);border-radius:999px;padding:8px 18px;width:300px;max-width:100%;
   margin-left:auto}
 .srch:focus{background:var(--surf);border-color:var(--brand);outline:none}
-.regwrap{max-height:480px;overflow:auto;border:1px solid var(--line);border-radius:14px}
+.regwrap{max-height:480px;overflow:auto;-webkit-overflow-scrolling:touch;
+  border:1px solid var(--line);border-radius:14px}
 .nores{padding:44px 24px;text-align:center}
 .nores b{display:block;font-size:15px;font-weight:700;margin-bottom:5px}
 .nores span{color:var(--mut);font-size:13px}
@@ -291,8 +295,10 @@ footer b{color:var(--ink2)}
   line-height:1.15}
 .main{margin-left:216px}
 @media (max-width:1080px){
-  .side{position:static;width:auto;flex-direction:row;align-items:center;gap:14px;
-    border-right:0;border-bottom:1px solid var(--line);padding:12px 16px;overflow-x:auto}
+  .side{position:sticky;top:0;z-index:60;width:auto;flex-direction:row;align-items:center;
+    gap:14px;border-right:0;border-bottom:1px solid var(--line);
+    padding:calc(10px + env(safe-area-inset-top,0px)) 16px 10px;overflow-x:auto;
+    -webkit-overflow-scrolling:touch}
   .mark{border:0;padding:0;margin:0}
   .mark span b{font-size:15px}
   #nav{display:flex;gap:4px;margin-left:auto}
@@ -326,17 +332,73 @@ button.bt.clr:hover{border-color:var(--red);color:var(--redink)}
 .mi{padding-top:14px}
 .mi:first-child{padding-top:0}
 
+
+/* ---- mobile: the register becomes one card per programme ---- */
+.regcards{display:none;gap:10px}
+.sortsel{display:none}
+.rc{border:1px solid var(--line);border-radius:14px;padding:14px 15px;background:var(--surf)}
+.rc.sev1{border-left:3px solid var(--red)} .rc.sev2{border-left:3px solid var(--amber)}
+.rc .rch{display:flex;align-items:flex-start;gap:10px;margin-bottom:11px}
+.rc .rcn{font-size:15px;font-weight:700;letter-spacing:-.015em;line-height:1.3}
+.rc .rcc{font-size:11.5px;color:var(--mut);font-weight:500;margin-top:2px}
+.rc .rch .tag{margin-left:auto;flex:none}
+.rc dl{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin:0}
+.rc dt{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+.rc dd{margin:2px 0 0;font-size:13.5px;font-weight:600;font-variant-numeric:tabular-nums}
+.rc dd.wide{font-weight:500}
+.rc .rcbar{grid-column:1/-1}
+.rc .rcbar .ub{width:100%;height:8px;margin-top:5px}
+.more{width:100%;min-height:52px;display:flex;flex-direction:column;align-items:center;gap:2px;
+  border-style:dashed;font-weight:700}
+.more em{font-style:normal;font-size:11px;font-weight:500;color:var(--mut)}
+.allshown{text-align:center;color:var(--mut);font-size:12.5px;margin:6px 0 0}
+@media (max-width:760px){
+  .regwrap{display:none}
+  .regcards{display:grid}
+  .sortsel{display:inline-block;width:100%}
+  .srch{width:100%;margin-left:0}
+  .ph{gap:8px}
+  .ph .sub{margin-left:0;width:100%}
+}
+
 @media (max-width:1180px){
   .kpis{grid-template-columns:repeat(3,1fr)}
   .row3{grid-template-columns:1fr 1fr}
   .row3 .panel:nth-child(3){grid-column:1/-1}
 }
 @media (max-width:760px){
-  .kpis{grid-template-columns:repeat(2,1fr)}
+  /* a select sizes itself to its longest option; without this, "South Africa (SAHPRA)"
+     forces every filter onto its own row */
+  .ctrls .sel{min-width:0;width:100%}
+  .mark{gap:9px}
+  .mark svg{width:30px;height:30px}
+  .mark span{font-size:0}
+  .mark span b{font-size:16px;white-space:nowrap}
+  #nav a{min-height:40px;display:flex;align-items:center}
+  .kpis{grid-template-columns:repeat(2,1fr);gap:10px}
   .row3,.row2{grid-template-columns:1fr}
-  .kpi .v{font-size:30px}
-  .barin{padding:12px 16px}
-  .ctrls{width:100%}
+  .row2>.panel{max-height:none}
+  .kpi{padding:16px 12px 14px}
+  .kpi .v{font-size:28px}
+  .kpi .k{font-size:10px;letter-spacing:.06em}
+  .barin{padding:12px 16px;gap:10px}
+  /* a predictable grid beats flex wrapping here: search, two filters, status and
+     clear, then refresh. The clock is decorative, so it goes. */
+  .ctrls{width:100%;margin-left:0;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .ctrls .sel,.ctrls .bt,.gsrch{min-height:46px}
+  .gsrch{grid-column:1/-1}
+  .ctrls .live{display:none}
+  .ctrls .bt.p{grid-column:1/-1}
+  .gsrch input,.srch{font-size:16px;width:100%}   /* 16px stops iOS zooming on focus */
+  .panel{padding:16px 14px}
+  .wrap{padding-block:14px 48px}
+  .glist,.scrollbox,.att{max-height:none}
+  #nav a{padding:9px 12px}
+  .tabs button{padding:11px 14px;min-height:40px}
+  .fchip{padding:5px 9px 5px 11px}
+}
+@media (max-width:344px){
+  .rc dl{grid-template-columns:1fr}
 }
 </style>
 
@@ -497,8 +559,10 @@ button.bt.clr:hover{border-color:var(--red);color:var(--redink)}
     <div class="ph"><h2>Full register</h2>
       <input id="q" class="srch" type="search" placeholder="Search product, code, customer, stage"
         aria-label="Search the register">
+      <select class="sel sortsel" id="sortSel" aria-label="Sort the register"></select>
       <span class="sub" id="regSub"></span></div>
     <div class="regwrap"><table class="reg" id="reg"></table></div>
+    <div class="regcards" id="regCards"></div>
   </div>
 
   <footer id="foot"></footer>
@@ -714,7 +778,7 @@ P.forEach(p=>{p.slip=days(p.t,p.fc); p.util=p.sp/p.b*100; p.sell=p.b/(1-MARGIN);
   p.projCost=Math.max(p.b,p.sp); p.projMargin=(p.sell-p.projCost)/p.sell*100;
   p.sev=p.slip>20?1:p.slip>0?2:p.util>100?1:p.util>80?2:0;});
 
-let SORT={k:'sev',dir:1}, Q='';
+let SORT={k:'sev',dir:1}, Q='', CARDN=12;
 
 let G='dept',CUST='all',MKT='all',STAT='all',GQ='';
 const el=id=>document.getElementById(id);
@@ -883,7 +947,11 @@ function register(A){
       <span>Nothing in the ${A.length} programme${A.length===1?'':'s'} currently in view matches that.
         Try a molecule, a project code such as SKPD-2024, a customer, a department or a stage name.</span>
       <br><button class="bt" id="qClear">Clear this search</button></td></tr></tbody>`;
-    el('qClear').onclick=()=>{Q=''; el('q').value=''; register(cur()); el('q').focus()};
+    el('regCards').innerHTML=`<div class="rc nores"><b>No results for &ldquo;${esc(Q.trim())}&rdquo;</b>
+      <span>Nothing in the ${A.length} programme${A.length===1?'':'s'} in view matches that.</span>
+      <br><button class="bt" id="qClear2">Clear this search</button></div>`;
+    const clr=()=>{Q=''; el('q').value=''; register(cur()); el('q').focus()};
+    el('qClear').onclick=clr; el('qClear2').onclick=clr;
     return;
   }
   const head=COLS.map(([key,lab,num])=>
@@ -908,8 +976,38 @@ function register(A){
   el('reg').querySelectorAll('th').forEach(th=>th.onclick=()=>{
     const key=th.dataset.k;
     SORT = SORT.k===key ? {k:key,dir:-SORT.dir} : {k:key,dir:['n','c','mk','f','dp','s'].includes(key)?1:-1};
+    CARDN=12;
     register(cur());
   });
+
+  // On a phone the same rows render one card at a time. Sideways scrolling through
+  // thirteen columns on a 390px screen is not a register anyone will read.
+  const shown=rows.slice(0,CARDN), left=rows.length-shown.length;
+  el('regCards').innerHTML=shown.map(p=>{
+    const col=p.util>100?'#e24c4c':p.util>80?'#e0920d':'#38a160';
+    const pill=p.od?`<span class="tag r">${p.od} overdue</span>`
+      :p.slip>0?`<span class="tag a">${p.slip} d slip</span>`
+      :p.util>100?`<span class="tag r">over budget</span>`
+      :p.up>10?`<span class="tag s">stale</span>`:`<span class="tag g">on track</span>`;
+    return `<div class="rc sev${p.sev}">
+      <div class="rch"><div><div class="rcn">${esc(p.n)}</div>
+        <div class="rcc">${esc(p.cd)} · ${esc(p.c)} · ${esc(p.mk)}</div></div>${pill}</div>
+      <dl>
+        <div class="rcbar"><dt>Live stage</dt><dd class="wide">${esc(p.s)}</dd></div>
+        <div><dt>Owner</dt><dd>${esc(p.dp)}</dd></div>
+        <div><dt>Progress</dt><dd>${p.sn} of ${p.st} stages</dd></div>
+        <div><dt>Target filing</dt><dd>${fmt(p.t)}${p.slip>0
+          ?` <span style="color:${p.slip>20?'var(--redink)':'var(--amberink)'};font-weight:700">+${p.slip} d</span>`:''}</dd></div>
+        <div><dt>Budget</dt><dd>${L(p.b)}</dd></div>
+        <div><dt>Last update</dt><dd${p.up>10?' style="color:var(--amberink)"':''}>${p.up===0?'today':p.up===1?'1 day ago':p.up+' days ago'}</dd></div>
+        <div class="rcbar"><dt>Spent ${L(p.sp)} of ${L(p.b)} · ${p.util.toFixed(0)}%</dt>
+          <dd><span class="ub"><i style="width:${Math.min(100,p.util)}%;background:${col}"></i></span></dd></div>
+      </dl></div>`;
+  }).join('')
+  + (left>0 ? `<button class="bt more" id="moreBtn">Show ${Math.min(12,left)} more
+       <em>${left} of ${rows.length} still hidden</em></button>`
+     : rows.length>12 ? `<p class="allshown">All ${rows.length} programmes shown</p>` : '');
+  const mb=el('moreBtn'); if(mb) mb.onclick=()=>{CARDN+=12; register(cur());};
 }
 
 function attention(A){
@@ -1038,17 +1136,25 @@ el('fCust').innerHTML='<option value="all">All customers</option>'+
   custs.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
 el('fMkt').innerHTML='<option value="all">All markets</option>'+
   mkts.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
-el('fCust').onchange=e=>{CUST=e.target.value;render()};
-el('fMkt').onchange=e=>{MKT=e.target.value;render()};
-el('fStat').onchange=e=>{STAT=e.target.value;render()};
+el('fCust').onchange=e=>{CUST=e.target.value;CARDN=12;render()};
+el('fMkt').onchange=e=>{MKT=e.target.value;CARDN=12;render()};
+el('fStat').onchange=e=>{STAT=e.target.value;CARDN=12;render()};
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('.tabs button').forEach(x=>x.setAttribute('aria-selected','false'));
   b.setAttribute('aria-selected','true'); G=b.dataset.g; render();
   const g=el('group'); g.classList.remove('flash'); void g.offsetWidth; g.classList.add('flash');});
 el('refresh').onclick=()=>{el('refresh').textContent='Refreshed'; render();
   setTimeout(()=>el('refresh').textContent='Refresh',900)};
-let qt; el('q').oninput=e=>{clearTimeout(qt); qt=setTimeout(()=>{Q=e.target.value;register(cur())},140)};
-let gt; el('gq').oninput=e=>{clearTimeout(gt); gt=setTimeout(()=>{GQ=e.target.value;render()},160)};
+el('sortSel').innerHTML=[
+  ['sev',-1,'Status, worst first'],['slip',-1,'Slip, longest first'],
+  ['util',-1,'Budget used, highest first'],['t',1,'Target filing, soonest first'],
+  ['up',-1,'Last update, oldest first'],['b',-1,'Budget, largest first'],
+  ['n',1,'Product name, A to Z'],['c',1,'Customer, A to Z']
+].map(([k,d,lab])=>`<option value="${k}:${d}">${lab}</option>`).join('');
+el('sortSel').onchange=e=>{const [k,d]=e.target.value.split(':');
+  SORT={k,dir:+d}; CARDN=12; register(cur())};
+let qt; el('q').oninput=e=>{clearTimeout(qt); qt=setTimeout(()=>{Q=e.target.value;CARDN=12;register(cur())},140)};
+let gt; el('gq').oninput=e=>{clearTimeout(gt); gt=setTimeout(()=>{GQ=e.target.value;CARDN=12;render()},160)};
 el('emptyClear').onclick=()=>el('clear').click();
 el('clear').onclick=()=>{CUST=MKT='all'; STAT='all'; GQ=''; Q='';
   el('fCust').value='all'; el('fMkt').value='all'; el('fStat').value='all';
@@ -1082,6 +1188,9 @@ addEventListener('resize',()=>{syncOffset();spy()});
 syncOffset(); spy();
 const clock=()=>el('clock').textContent=new Date().toLocaleTimeString('en-GB',{hour12:false});
 clock(); setInterval(clock,1000); render();
+let wasPhone=innerWidth<=760;
+addEventListener('resize',()=>{const now=innerWidth<=760;
+  if(now!==wasPhone){wasPhone=now; register(cur());}});
 </script>
 
 </body>
