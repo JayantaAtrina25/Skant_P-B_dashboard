@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="SKant Healthcare project and budget tracking dashboard, working prototype by Atrina Technologies.">
 <meta name="robots" content="noindex">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%234338ca'/%3E%3Crect x='7' y='17' width='4' height='8' rx='1.5' fill='%23fff'/%3E%3Crect x='14' y='11' width='4' height='14' rx='1.5' fill='%23fff'/%3E%3Crect x='21' y='7' width='4' height='18' rx='1.5' fill='%23e0920d'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Crect width='36' height='36' rx='10' fill='%234338ca'/%3E%3Crect x='8' y='20' width='4.5' height='8' rx='2' fill='%23fff' opacity='.65'/%3E%3Crect x='15.75' y='13' width='4.5' height='15' rx='2' fill='%23fff'/%3E%3Crect x='23.5' y='8' width='4.5' height='20' rx='2' fill='%23f0a52c'/%3E%3C/svg%3E">
 <style>
 :root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 body{margin:0}
@@ -79,8 +79,8 @@ button.bt.p:hover{background:var(--brand2);border-color:var(--brand2);color:var(
 @media (prefers-reduced-motion:reduce){#group.flash{animation:none}}
 
 .kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
-.kpi{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:22px 20px 18px;
-  box-shadow:var(--shadow);position:relative;overflow:hidden;min-width:0}
+.kpi{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:22px 18px 18px;
+  box-shadow:var(--shadow);position:relative;overflow:hidden;min-width:0;text-align:center}
 .kpi::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:var(--rail,var(--brand))}
 .kpi .k{font-size:11.5px;font-weight:700;letter-spacing:.09em;
   text-transform:uppercase;color:var(--mut);margin-bottom:10px}
@@ -132,22 +132,23 @@ button.bt.p:hover{background:var(--brand2);border-color:var(--brand2);color:var(
 
 .runway{margin-top:12px}
 .rwscroll{overflow-x:auto;overflow-y:hidden}
-.rw{min-width:880px}
-.rwhead,.rwrow,.rwticks{display:grid;grid-template-columns:250px 1fr;gap:14px}
+.rw{min-width:700px}
+.rwhead,.rwrow,.rwticks{display:grid;grid-template-columns:232px 1fr;gap:16px}
 .rwhead{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
   color:var(--mut);padding-bottom:9px;border-bottom:1px solid var(--line)}
-.rwrow{align-items:center;padding:9px 0;border-bottom:1px solid var(--line2)}
+.rwrow{align-items:center;padding:7px 0;border-bottom:1px solid var(--line2)}
 .rwrow:last-child{border-bottom:0}
 .rwrow:hover{background:var(--surf2)}
 .rwname b{display:block;font-size:14px;font-weight:700;letter-spacing:-.015em;white-space:nowrap;
   overflow:hidden;text-overflow:ellipsis}
 .rwname span{font-size:11.5px;color:var(--mut);font-weight:500}
-.rwtrack{position:relative;height:26px}
+.rwtrack{position:relative;height:24px}
 .rwaxis{position:absolute;left:0;right:0;top:12px;height:2px;background:var(--line2);border-radius:2px}
 .rwslip{position:absolute;top:10px;height:6px;border-radius:99px;background:var(--amber)}
 .rwslip.bad{background:var(--red)}
 .rwdot{position:absolute;top:6px;width:14px;height:14px;border-radius:50%;margin-left:-7px}
-.rwdot.target{background:var(--surf);border:2px dashed var(--slate);top:5px;width:12px;height:12px}
+.rwdot.target{background:var(--surf);border:2px solid var(--slate);top:6px;width:10px;height:10px;
+  border-radius:2px;transform:rotate(45deg);margin-left:-5px}
 .rwdot.fc{background:var(--green);border:2px solid var(--surf)}
 .rwdot.fc.late{background:var(--red)}
 .rwdot.fc.near{background:var(--amber)}
@@ -162,7 +163,8 @@ button.bt.p:hover{background:var(--brand2);border-color:var(--brand2);color:var(
   margin-top:15px;align-items:center}
 .rwkey span{display:inline-flex;align-items:center;gap:6px}
 .rwkey i{width:11px;height:11px;border-radius:50%;display:block}
-.rwkey i.tg{border:2px dashed var(--slate);background:transparent;width:9px;height:9px}
+.rwkey i.tg{border:2px solid var(--slate);background:transparent;width:9px;height:9px;
+  border-radius:2px;transform:rotate(45deg)}
 
 .att{display:grid;gap:9px}
 .ai{display:grid;grid-template-columns:34px 1fr auto;gap:14px;align-items:center;
@@ -245,6 +247,60 @@ table.reg .cdx{font-size:11px;color:var(--mut);font-weight:500;letter-spacing:.0
 footer{margin-top:32px;font-size:12.5px;color:var(--mut);line-height:1.7}
 footer b{color:var(--ink2)}
 
+
+/* ---- sidebar ---- */
+.side{position:fixed;top:0;left:0;bottom:0;width:216px;z-index:50;background:var(--surf);
+  border-right:1px solid var(--line);display:flex;flex-direction:column;
+  padding:18px 14px calc(18px + env(safe-area-inset-bottom,0px));
+  padding-top:calc(18px + env(safe-area-inset-top,0px))}
+.mark{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--ink);
+  padding:0 6px 20px;border-bottom:1px solid var(--line2);margin-bottom:14px}
+.mark svg{width:36px;height:36px;flex:none;border-radius:10px}
+.mark span{font-size:13.5px;line-height:1.25;font-weight:600;color:var(--mut)}
+.mark span b{display:block;font-size:17px;font-weight:800;color:var(--ink);letter-spacing:-.03em}
+#nav{display:grid;gap:2px}
+#nav a{display:block;padding:9px 12px;border-radius:10px;text-decoration:none;color:var(--mut);
+  font-size:13.5px;font-weight:600;transition:background .15s,color .15s}
+#nav a:hover{background:var(--surf2);color:var(--ink)}
+#nav a.on{background:var(--brandsoft);color:var(--brand);font-weight:700}
+.sidefoot{margin-top:auto;padding:14px 12px 0;border-top:1px solid var(--line2)}
+.sfk{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--mut)}
+.sfv{font-size:22px;font-weight:800;letter-spacing:-.035em;font-variant-numeric:tabular-nums;
+  line-height:1.15}
+.main{margin-left:216px}
+@media (max-width:1080px){
+  .side{position:static;width:auto;flex-direction:row;align-items:center;gap:14px;
+    border-right:0;border-bottom:1px solid var(--line);padding:12px 16px;overflow-x:auto}
+  .mark{border:0;padding:0;margin:0}
+  .mark span b{font-size:15px}
+  #nav{display:flex;gap:4px;margin-left:auto}
+  #nav a{padding:7px 12px;white-space:nowrap;font-size:12.5px}
+  .sidefoot{display:none}
+  .main{margin-left:0}
+}
+/* ---- header search + clear ---- */
+.gsrch{display:inline-flex;align-items:center;gap:8px;background:var(--surf);
+  border:1px solid var(--line);border-radius:999px;padding:0 16px;height:38px;
+  color:var(--mut);box-shadow:0 1px 2px rgba(20,27,52,.04)}
+.gsrch:focus-within{border-color:var(--brand);color:var(--brand)}
+.gsrch svg{width:15px;height:15px;flex:none}
+.gsrch input{border:0;background:none;outline:none;font-family:var(--fs);font-size:13.5px;
+  color:var(--ink);width:210px;max-width:40vw}
+button.bt.clr{color:var(--redink);border-color:#f3c9c9;background:var(--redsoft);font-weight:700}
+button.bt.clr:hover{border-color:var(--red);color:var(--redink)}
+/* ---- scrollable side panels ---- */
+.scrollbox{max-height:330px;overflow-y:auto;padding-right:6px}
+/* ---- budget bar with a real 100% line ---- */
+.mbar{height:12px;border-radius:99px;background:var(--line2);position:relative;overflow:visible}
+.mbar .fill{position:absolute;top:0;bottom:0;left:0;border-radius:99px 0 0 99px}
+.mbar .fill.full{border-radius:99px}
+.mbar .over{position:absolute;top:0;bottom:0;background:var(--red);border-radius:0 99px 99px 0}
+.mbar .mark100{position:absolute;top:-5px;bottom:-5px;width:2px;background:var(--ink2);
+  border-radius:2px}
+.mbar .mark100::after{content:"";position:absolute;inset:0}
+.mi{padding-top:14px}
+.mi:first-child{padding-top:0}
+
 @media (max-width:1180px){
   .kpis{grid-template-columns:repeat(3,1fr)}
   .row3{grid-template-columns:1fr 1fr}
@@ -261,12 +317,42 @@ footer b{color:var(--ink2)}
 
 </head>
 <body>
+<aside class="side" id="side">
+  <a class="mark" href="#top">
+    <svg viewBox="0 0 36 36" aria-hidden="true"><rect width="36" height="36" rx="10" fill="var(--brand)"/>
+      <rect x="8" y="20" width="4.5" height="8" rx="2" fill="#fff" opacity=".65"/>
+      <rect x="15.75" y="13" width="4.5" height="15" rx="2" fill="#fff"/>
+      <rect x="23.5" y="8" width="4.5" height="20" rx="2" fill="#f0a52c"/></svg>
+    <span><b>SKant</b>Portfolio Control</span>
+  </a>
+  <nav id="nav">
+    <a href="#top" data-s="top" class="on">Overview</a>
+    <a href="#sec-health" data-s="sec-health">Schedule health</a>
+    <a href="#sec-runway" data-s="sec-runway">Filing runway</a>
+    <a href="#sec-act" data-s="sec-act">Needs attention</a>
+    <a href="#sec-watch" data-s="sec-watch">Stale &amp; unplanned</a>
+    <a href="#sec-reg" data-s="sec-reg">Full register</a>
+  </nav>
+  <div class="sidefoot">
+    <div class="sfk">Register</div>
+    <div class="sfv" id="sfCount">&mdash;</div>
+    <div class="sfk" style="margin-top:12px">Needs attention</div>
+    <div class="sfv" id="sfAtt" style="color:var(--redink)">&mdash;</div>
+  </div>
+</aside>
+
+<div class="main" id="top">
 <div class="bar"><div class="barin">
   <div class="logo">
     <h1><em>SKant</em> Portfolio Control</h1>
     <p id="meta">loading</p>
   </div>
   <div class="ctrls">
+    <label class="gsrch"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.6"
+        fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M10.5 10.5 L14 14"
+        stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      <input id="gq" type="search" placeholder="Search any product, code or stage"
+        aria-label="Search the portfolio"></label>
     <select class="sel" id="fCust" aria-label="Filter by customer"></select>
     <select class="sel" id="fMkt" aria-label="Filter by market"></select>
     <select class="sel" id="fStat" aria-label="Filter by status">
@@ -274,6 +360,7 @@ footer b{color:var(--ink2)}
       <option value="late">Needs attention</option>
       <option value="ok">On track</option>
     </select>
+    <button class="bt clr" id="clear" hidden>Clear filters</button>
     <span class="live"><i></i><span id="clock">--:--:--</span></span>
     <button class="bt p" id="refresh">Refresh</button>
   </div>
@@ -282,7 +369,7 @@ footer b{color:var(--ink2)}
 <div class="wrap">
   <div class="kpis" id="kpis"></div>
 
-  <div class="row3">
+  <div class="row3" id="sec-health">
     <div class="panel">
       <div class="ph"><h2>Schedule health</h2></div>
       <div class="gauge">
@@ -334,7 +421,7 @@ footer b{color:var(--ink2)}
     </div>
   </div>
 
-  <div class="panel runway">
+  <div class="panel runway" id="sec-runway">
     <div class="ph"><h2>Filing runway</h2><span class="sub" id="rwSub"></span></div>
     <div class="rwscroll"><div class="rw">
       <div class="rwhead"><span>Product</span><span>Target filing against forecast</span></div>
@@ -350,31 +437,31 @@ footer b{color:var(--ink2)}
     </div>
   </div>
 
-  <div class="row2">
+  <div class="row2" id="sec-act">
     <div class="panel">
       <div class="ph"><h2>Needs attention today</h2><span class="sub">worst first</span></div>
       <div class="att" id="att"></div>
     </div>
     <div class="panel">
-      <div class="ph"><h2>Budget utilisation</h2><span class="sub">spend against cost budget</span></div>
+      <div class="ph"><h2>Budget utilisation</h2><span class="sub">dark line is 100% of budget, red is the overrun</span></div>
       <div class="mlist" id="money"></div>
       <div class="msum" id="msum"></div>
     </div>
   </div>
 
-  <div class="row2">
+  <div class="row2" id="sec-watch">
     <div class="panel">
       <div class="ph"><h2>Stale records</h2>
         <span class="sub">no milestone update in over 10 days</span></div>
-      <div id="stale"></div>
+      <div id="stale" class="scrollbox"></div>
     </div>
     <div class="panel">
       <div class="ph"><h2>Unplanned pipeline</h2><span class="sub" id="tbcSub"></span></div>
-      <div id="tbc"></div>
+      <div id="tbc" class="scrollbox"></div>
     </div>
   </div>
 
-  <div class="panel" style="margin-top:12px">
+  <div class="panel" id="sec-reg" style="margin-top:16px">
     <div class="ph"><h2>Full register</h2>
       <input id="q" class="srch" type="search" placeholder="Search product, code, customer, stage"
         aria-label="Search the register">
@@ -383,6 +470,7 @@ footer b{color:var(--ink2)}
   </div>
 
   <footer id="foot"></footer>
+</div>
 </div>
 <div id="tip" role="status"></div>
 
@@ -596,11 +684,14 @@ P.forEach(p=>{p.slip=days(p.t,p.fc); p.util=p.sp/p.b*100; p.sell=p.b/(1-MARGIN);
 
 let SORT={k:'sev',dir:1}, Q='';
 
-let G='dept',CUST='all',MKT='all',STAT='all';
+let G='dept',CUST='all',MKT='all',STAT='all',GQ='';
 const el=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const hit=(p,q)=>!q||[p.n,p.cd,p.c,p.mk,p.dp,p.s].some(v=>v.toLowerCase().includes(q));
 const cur=()=>P.filter(p=>(CUST==='all'||p.c===CUST)&&(MKT==='all'||p.mk===MKT)&&
+  hit(p,GQ.trim().toLowerCase())&&
   (STAT==='all'||(STAT==='late'?(p.slip>0||p.util>80):(p.slip<=0&&p.util<=80))));
+const anyFilter=()=>CUST!=='all'||MKT!=='all'||STAT!=='all'||GQ.trim()!=='';
 
 const tip=el('tip');
 function bind(node,html){
@@ -696,13 +787,19 @@ function group(A){
 }
 
 function runway(A){
-  const end=new Date(TODAY); end.setDate(end.getDate()+270);
-  const span=days(TODAY,end);
-  const all=A.filter(p=>p.t<=end).sort((a,b)=>a.fc-b.fc);
-  const list=all.slice(0,22);
+  const horizon=new Date(TODAY); horizon.setDate(horizon.getDate()+270);
+  const all=A.filter(p=>p.t<=horizon).sort((a,b)=>a.fc-b.fc);
+  const list=all.slice(0,18);
+  if(!list.length){el('rwRows').innerHTML=
+    '<p style="color:var(--mut);font-size:13.5px;padding:14px 0">No filings in this view.</p>';
+    el('rwTicks').innerHTML=''; el('rwSub').textContent=''; return;}
+  // Axis spans only the dates actually present, plus a small margin, so there is no dead space.
+  const last=new Date(Math.max(...list.map(p=>Math.max(+p.t,+p.fc))));
+  const end=new Date(last); end.setDate(end.getDate()+12);
+  const span=Math.max(30,days(TODAY,end));
   const x=d=>Math.max(0,Math.min(100,days(TODAY,d)/span*100));
-  el('rwSub').textContent=`${list.length} of ${all.length} filings due by ${fmt(end)}`
-    +(all.length>list.length?`, soonest first`:'');
+  el('rwSub').textContent=`${list.length} of ${all.length} filings, ${fmt(TODAY)} to ${fmt(end)}`
+    +(all.length>list.length?', soonest first':'');
   el('rwRows').innerHTML=list.map(p=>{
     const xt=x(p.t),xf=x(p.fc),lo=Math.min(xt,xf),w=Math.abs(xf-xt);
     const cls=p.slip>20?'late':p.slip>0?'near':'';
@@ -725,8 +822,10 @@ function runway(A){
     n.style.left=x(TODAY)+'%'; row.querySelector('.rwtrack').appendChild(n);
   });
   const tk=el('rwTicks'); tk.innerHTML='';
-  for(let m=0;m<12;m++){const d=new Date(TODAY.getFullYear(),TODAY.getMonth()+m,1);
-    if(d>end||d<TODAY)continue;
+  const step=span>330?2:1;                      // every other month on a long axis
+  for(let m=0;m<24;m+=step){
+    const d=new Date(TODAY.getFullYear(),TODAY.getMonth()+m,1);
+    if(d>end)continue; if(d<TODAY)continue;
     const s=document.createElement('span'); s.style.left=x(d)+'%';
     s.textContent=d.toLocaleDateString('en-GB',{month:'short'}).toUpperCase()
       +(d.getMonth()===0?" '"+String(d.getFullYear()).slice(2):''); tk.appendChild(s);}
@@ -736,8 +835,7 @@ const COLS=[['n','Product',0],['c','Customer',0],['mk','Market',0],['f','Form',0
  ['dp','Owner',0],['s','Live stage',0],['sn','Stage',1],['t','Target',1],
  ['slip','Slip',1],['b','Budget',1],['util','Used',1],['up','Updated',1],['sev','Status',1]];
 function register(A){
-  const q=Q.trim().toLowerCase();
-  let rows=A.filter(p=>!q||[p.n,p.cd,p.c,p.mk,p.dp,p.s].some(v=>v.toLowerCase().includes(q)));
+  let rows=A.filter(p=>hit(p,Q.trim().toLowerCase()));
   const k=SORT.k, d=SORT.dir;
   rows=rows.slice().sort((a,b)=>{
     let va=a[k], vb=b[k];
@@ -788,14 +886,23 @@ function attention(A){
 
 function money(A){
   const top=A.slice().sort((a,b)=>b.util-a.util).slice(0,7);
+  // The track runs to 130% of budget, so the 100% line sits at 77% of the width and an
+  // overrun is visible as a separate red piece beyond it rather than a wall of red.
+  const SCALE=130, LINE=100/SCALE*100;
   el('money').innerHTML=top.map(p=>{
-    const over=p.util>100, col=over?'#e24c4c':p.util>80?'#e0920d':'#38a160';
+    const over=p.util>100;
+    const col=p.util>80?'#e0920d':'#38a160';
     const ink=over?'var(--redink)':p.util>80?'var(--amberink)':'var(--greenink)';
+    const w=Math.min(p.util,100)/SCALE*100;
+    const ow=over?(Math.min(p.util,SCALE)-100)/SCALE*100:0;
     return `<div class="mi"><div class="t"><b>${esc(p.n)}</b>
       <span class="amt">${L(p.sp)} / ${L(p.b)}</span>
       <span class="pc" style="color:${ink}">${p.util.toFixed(0)}%</span></div>
-      <div class="mbar"><i style="width:${Math.min(100,p.util)}%;background:${col}"></i>
-      ${over?`<u style="left:${(100/p.util*100).toFixed(1)}%"></u>`:''}</div></div>`;
+      <div class="mbar">
+        <span class="fill${over?'':' full'}" style="width:${w}%;background:${col}"></span>
+        ${over?`<span class="over" style="left:${LINE}%;width:${ow}%"></span>`:''}
+        <span class="mark100" style="left:${LINE}%"></span>
+      </div></div>`;
   }).join('');
   const b=A.reduce((a,p)=>a+p.b,0), s=A.reduce((a,p)=>a+p.sp,0);
   const sell=A.reduce((a,p)=>a+p.sell,0), proj=A.reduce((a,p)=>a+p.projCost,0);
@@ -853,6 +960,9 @@ function render(){
   el('meta').textContent=`Q3 FY27 · ${P.length} active + ${TBC.length} unplanned · `
     +(CUST==='all'?'all customers':CUST)+(MKT==='all'?'':' · '+MKT);
   kpis(A);gauge(A);donut(A);group(A);runway(A);attention(A);money(A);stale(A);tbc();register(A);
+  el('sfCount').textContent=A.length+' / '+P.length;
+  el('sfAtt').textContent=A.filter(p=>p.sev>0).length;
+  el('clear').hidden=!anyFilter();
 }
 
 const custs=[...new Set(P.map(p=>p.c))].sort();
@@ -871,6 +981,20 @@ document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{
 el('refresh').onclick=()=>{el('refresh').textContent='Refreshed'; render();
   setTimeout(()=>el('refresh').textContent='Refresh',900)};
 let qt; el('q').oninput=e=>{clearTimeout(qt); qt=setTimeout(()=>{Q=e.target.value;register(cur())},140)};
+let gt; el('gq').oninput=e=>{clearTimeout(gt); gt=setTimeout(()=>{GQ=e.target.value;render()},160)};
+el('clear').onclick=()=>{CUST=MKT='all'; STAT='all'; GQ=''; Q='';
+  el('fCust').value='all'; el('fMkt').value='all'; el('fStat').value='all';
+  el('gq').value=''; el('q').value=''; render(); el('gq').focus()};
+const navLinks=[...document.querySelectorAll('#nav a')];
+const SECS=['top','sec-health','sec-runway','sec-act','sec-watch','sec-reg']
+  .map(id=>el(id)).filter(Boolean);
+function spy(){
+  const y=scrollY+140; let cur=SECS[0];
+  for(const n of SECS) if(n.offsetTop<=y) cur=n;
+  navLinks.forEach(a=>a.classList.toggle('on',a.dataset.s===cur.id));
+}
+addEventListener('scroll',()=>requestAnimationFrame(spy),{passive:true});
+addEventListener('resize',spy); spy();
 const clock=()=>el('clock').textContent=new Date().toLocaleTimeString('en-GB',{hour12:false});
 clock(); setInterval(clock,1000); render();
 </script>
