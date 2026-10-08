@@ -105,7 +105,10 @@ button.bt.p:hover{background:var(--brand2);border-color:var(--brand2);color:var(
 .kpi .d b{color:var(--ink2);font-weight:700}
 
 .row3{display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:16px;margin-top:16px;align-items:start}
-.row2{display:grid;grid-template-columns:1.15fr 1fr;gap:16px;margin-top:16px;align-items:start}
+.row2{display:grid;grid-template-columns:1.15fr 1fr;gap:16px;margin-top:16px;align-items:stretch}
+.row2>.panel{display:flex;flex-direction:column;max-height:640px}
+.row2>.panel>.att,.row2>.panel>.scrollbox{flex:1;min-height:0;max-height:none}
+.row2>.panel>.mlist{flex:1;min-height:0;overflow-y:auto}
 .panel{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);
   box-shadow:var(--shadow);padding:22px;min-width:0}
 .ph{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap}
@@ -181,7 +184,7 @@ button.bt.p:hover{background:var(--brand2);border-color:var(--brand2);color:var(
 .rwkey i.tg{border:2px solid var(--slate);background:transparent;width:9px;height:9px;
   border-radius:2px;transform:rotate(45deg)}
 
-.att{display:grid;gap:9px}
+.att{display:grid;gap:9px;align-content:start;overflow-y:auto;padding-right:4px}
 .ai{display:grid;grid-template-columns:34px 1fr auto;gap:14px;align-items:center;
   border:1px solid var(--line);border-radius:14px;padding:14px 16px;background:var(--surf);
   transition:border-color .15s,transform .15s}
@@ -201,7 +204,7 @@ button.bt.p:hover{background:var(--brand2);border-color:var(--brand2);color:var(
 .ai .rt .u{font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
   color:var(--mut)}
 
-.mlist{display:grid;gap:11px}
+.mlist{display:grid;gap:11px;align-content:start}
 .mi .t{display:flex;align-items:baseline;gap:9px;font-size:13.5px;margin-bottom:7px}
 .mi .t b{font-weight:700}
 .mi .t .amt{color:var(--mut);font-size:11.5px;font-weight:500;font-variant-numeric:tabular-nums}
@@ -237,6 +240,10 @@ table.tt .sm{font-size:11px;color:var(--mut)}
   margin-left:auto}
 .srch:focus{background:var(--surf);border-color:var(--brand);outline:none}
 .regwrap{max-height:480px;overflow:auto;border:1px solid var(--line);border-radius:14px}
+.nores{padding:44px 24px;text-align:center}
+.nores b{display:block;font-size:15px;font-weight:700;margin-bottom:5px}
+.nores span{color:var(--mut);font-size:13px}
+.nores button{margin-top:14px}
 table.reg{width:100%;min-width:960px;border-collapse:separate;border-spacing:0;font-size:13.5px}
 table.reg th{position:sticky;top:0;z-index:2;background:var(--surf2);text-align:left;
   font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
@@ -304,7 +311,7 @@ footer b{color:var(--ink2)}
 button.bt.clr{color:var(--redink);border-color:#f3c9c9;background:var(--redsoft);font-weight:700}
 button.bt.clr:hover{border-color:var(--red);color:var(--redink)}
 /* ---- scrollable side panels ---- */
-.scrollbox{max-height:330px;overflow-y:auto;padding-right:6px}
+.scrollbox{overflow-y:auto;padding-right:6px;max-height:360px}
 .empty{margin-top:16px;text-align:center;padding:48px 24px}
 .empty h3{margin:0 0 8px;font-size:19px;font-weight:800;letter-spacing:-.025em}
 .empty p{margin:0 auto 18px;max-width:46ch;color:var(--mut);font-size:14px}
@@ -870,6 +877,15 @@ function register(A){
     return d*(va-vb);
   });
   el('regSub').textContent=`${rows.length} of ${A.length} programmes`;
+  if(!rows.length){
+    el('reg').innerHTML=`<tbody><tr><td class="nores">
+      <b>No results for &ldquo;${esc(Q.trim())}&rdquo;</b>
+      <span>Nothing in the ${A.length} programme${A.length===1?'':'s'} currently in view matches that.
+        Try a molecule, a project code such as SKPD-2024, a customer, a department or a stage name.</span>
+      <br><button class="bt" id="qClear">Clear this search</button></td></tr></tbody>`;
+    el('qClear').onclick=()=>{Q=''; el('q').value=''; register(cur()); el('q').focus()};
+    return;
+  }
   const head=COLS.map(([key,lab,num])=>
     `<th data-k="${key}" class="${SORT.k===key?'on':''}" style="${num?'text-align:right':''}">${lab}${
       SORT.k===key?`<span class="ar">${SORT.dir>0?'↑':'↓'}</span>`:''}</th>`).join('');
