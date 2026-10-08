@@ -46,7 +46,19 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--fs);font-s
   flex-wrap:wrap}
 .logo h1{margin:0;font-size:26px;font-weight:800;letter-spacing:-.035em;line-height:1.1}
 .logo h1 em{font-style:normal;color:var(--brand)}
-.logo p{margin:3px 0 0;font-size:13px;color:var(--mut);font-weight:500}
+.logo p{margin:5px 0 0;font-size:13px;color:var(--mut);font-weight:500;display:flex;
+  align-items:center;gap:7px;flex-wrap:wrap}
+.mcount{white-space:nowrap}
+.mcount b{color:var(--ink);font-weight:800;font-variant-numeric:tabular-nums}
+.mnone{color:var(--slate);font-style:italic}
+.fchip{display:inline-flex;align-items:center;gap:6px;font-family:var(--fs);font-size:12px;
+  font-weight:600;color:var(--brand);background:var(--brandsoft);border:1px solid transparent;
+  border-radius:999px;padding:3px 8px 3px 10px;cursor:pointer;line-height:1.5}
+.fchip em{font-style:normal;font-weight:700;font-size:9.5px;letter-spacing:.07em;
+  text-transform:uppercase;opacity:.62}
+.fchip i{font-style:normal;font-size:15px;line-height:1;opacity:.5;padding:0 1px}
+.fchip:hover{border-color:var(--brand);background:var(--surf)}
+.fchip:hover i{opacity:1}
 .ctrls{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 select.sel,button.bt{font-family:var(--fs);font-size:13.5px;font-weight:600;color:var(--ink2);
   background:var(--surf);border:1px solid var(--line);border-radius:999px;padding:9px 18px;
@@ -293,6 +305,9 @@ button.bt.clr{color:var(--redink);border-color:#f3c9c9;background:var(--redsoft)
 button.bt.clr:hover{border-color:var(--red);color:var(--redink)}
 /* ---- scrollable side panels ---- */
 .scrollbox{max-height:330px;overflow-y:auto;padding-right:6px}
+.empty{margin-top:16px;text-align:center;padding:48px 24px}
+.empty h3{margin:0 0 8px;font-size:19px;font-weight:800;letter-spacing:-.025em}
+.empty p{margin:0 auto 18px;max-width:46ch;color:var(--mut);font-size:14px}
 /* ---- budget bar with a real 100% line ---- */
 .mbar{height:12px;border-radius:99px;background:var(--line2);position:relative;overflow:visible}
 .mbar .fill{position:absolute;top:0;bottom:0;left:0;border-radius:99px 0 0 99px}
@@ -371,6 +386,13 @@ button.bt.clr:hover{border-color:var(--red);color:var(--redink)}
 
 <div class="wrap">
   <div class="kpis" id="kpis"></div>
+
+  <div class="panel empty" id="empty" hidden>
+    <h3>No programme matches these filters</h3>
+    <p>The register holds 64 active programmes. The combination you have selected returns none
+      of them. Remove one of the chips beside the title, or clear everything and start again.</p>
+    <button class="bt p" id="emptyClear">Clear all filters</button>
+  </div>
 
   <div class="row3" id="sec-health">
     <div class="panel">
@@ -912,6 +934,8 @@ function money(A){
   el('msum').innerHTML=[['Cost budget',CR(b)],['Spent to date',CR(s)],
     ['Projected margin',sell?((sell-proj)/sell*100).toFixed(1)+'%':'—']]
     .map(([k,v])=>`<div><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
+  if(!A.length){el('foot').innerHTML=`Nothing matches the current filters. Remove one of the
+    chips next to the title, or press Clear filters, to bring the register back.`; return;}
   el('foot').innerHTML=`<b>${A.length} programmes</b> in view · cost budget <b>${CR(b)}</b> ·
     spent <b>${CR(s)}</b>, ${(s/b*100).toFixed(0)}% · quoted at 40% margin, projected
     <b>${((sell-proj)/sell*100).toFixed(1)}%</b>. ${(()=>{const o=A.filter(p=>p.util>100).length;
@@ -960,9 +984,33 @@ function tbc(){
 
 function render(){
   const A=cur();
-  el('meta').textContent=`Q3 FY27 · ${P.length} active + ${TBC.length} unplanned · `
-    +(CUST==='all'?'all customers':CUST)+(MKT==='all'?'':' · '+MKT);
+  // Count what is actually in view, and name every filter that narrowed it. A summary line
+  // that leaves one out is worse than no summary, because a screenshot of it reads as the whole set.
+  const STATW={late:'Needs attention',ok:'On track'};
+  const chips=[
+    CUST!=='all' && ['cust','Customer',CUST],
+    MKT !=='all' && ['mkt','Market',MKT],
+    STAT!=='all' && ['stat','Status',STATW[STAT]],
+    GQ.trim()    && ['gq','Search','"'+GQ.trim()+'"'],
+  ].filter(Boolean);
+  el('meta').innerHTML=
+    `<span class="mcount">${A.length===P.length?`${P.length} programmes`
+      :`<b>${A.length}</b> of ${P.length} programmes`} · ${TBC.length} unplanned</span>`
+    + (chips.length
+       ? chips.map(([k,lab,val])=>`<button class="fchip" data-k="${k}"
+           title="Remove this filter"><em>${lab}</em>${esc(val)}<i>&times;</i></button>`).join('')
+       : '<span class="mnone">no filters, whole register</span>');
+  el('meta').querySelectorAll('.fchip').forEach(c=>c.onclick=()=>{
+    const k=c.dataset.k;
+    if(k==='cust'){CUST='all'; el('fCust').value='all';}
+    if(k==='mkt'){MKT='all'; el('fMkt').value='all';}
+    if(k==='stat'){STAT='all'; el('fStat').value='all';}
+    if(k==='gq'){GQ=''; el('gq').value='';}
+    render();
+  });
   kpis(A);gauge(A);donut(A);group(A);runway(A);attention(A);money(A);stale(A);tbc();register(A);
+  el('empty').hidden=A.length>0;
+  document.querySelectorAll('.row3,.runway,.row2,#sec-reg').forEach(n=>n.hidden=A.length===0);
   el('sfCount').textContent=A.length+' / '+P.length;
   el('sfAtt').textContent=A.filter(p=>p.sev>0).length;
   el('clear').hidden=!anyFilter();
@@ -985,6 +1033,7 @@ el('refresh').onclick=()=>{el('refresh').textContent='Refreshed'; render();
   setTimeout(()=>el('refresh').textContent='Refresh',900)};
 let qt; el('q').oninput=e=>{clearTimeout(qt); qt=setTimeout(()=>{Q=e.target.value;register(cur())},140)};
 let gt; el('gq').oninput=e=>{clearTimeout(gt); gt=setTimeout(()=>{GQ=e.target.value;render()},160)};
+el('emptyClear').onclick=()=>el('clear').click();
 el('clear').onclick=()=>{CUST=MKT='all'; STAT='all'; GQ=''; Q='';
   el('fCust').value='all'; el('fMkt').value='all'; el('fStat').value='all';
   el('gq').value=''; el('q').value=''; render(); el('gq').focus()};
