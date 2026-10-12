@@ -1,19 +1,3 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="SKant Healthcare project and budget tracking dashboard, working prototype by Atrina Technologies.">
-<meta name="robots" content="noindex">
-<meta name="theme-color" content="#f1f3f9">
-<meta name="format-detection" content="telephone=no">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Crect width='36' height='36' rx='10' fill='%234338ca'/%3E%3Crect x='8' y='20' width='4.5' height='8' rx='2' fill='%23fff' opacity='.65'/%3E%3Crect x='15.75' y='13' width='4.5' height='15' rx='2' fill='%23fff'/%3E%3Crect x='23.5' y='8' width='4.5' height='20' rx='2' fill='%23f0a52c'/%3E%3C/svg%3E">
-<style>
-:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-body{margin:0}
-img{max-width:100%}
-[hidden]{display:none!important}
-</style>
 <title>SKant Portfolio Control</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap">
@@ -279,11 +263,9 @@ footer b{color:var(--ink2)}
   border-right:1px solid var(--line);display:flex;flex-direction:column;
   padding:18px 14px calc(18px + env(safe-area-inset-bottom,0px));
   padding-top:calc(18px + env(safe-area-inset-top,0px))}
-.mark{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--ink);
-  padding:0 6px 20px;border-bottom:1px solid var(--line2);margin-bottom:14px}
-.mark svg{width:36px;height:36px;flex:none;border-radius:10px}
-.mark span{font-size:13.5px;line-height:1.25;font-weight:600;color:var(--mut)}
-.mark span b{display:block;font-size:17px;font-weight:800;color:var(--ink);letter-spacing:-.03em}
+.mark{display:block;text-decoration:none;color:var(--ink);
+  padding:2px 6px 20px;border-bottom:1px solid var(--line2);margin-bottom:14px}
+.mark img{width:126px;height:auto;display:block}
 #nav{display:grid;gap:2px}
 #nav a{display:block;padding:9px 12px;border-radius:10px;text-decoration:none;color:var(--mut);
   font-size:13.5px;font-weight:600;transition:background .15s,color .15s}
@@ -299,8 +281,8 @@ footer b{color:var(--ink2)}
     gap:14px;border-right:0;border-bottom:1px solid var(--line);
     padding:calc(10px + env(safe-area-inset-top,0px)) 16px 10px;overflow-x:auto;
     -webkit-overflow-scrolling:touch}
-  .mark{border:0;padding:0;margin:0}
-  .mark span b{font-size:15px}
+  .mark{border:0;padding:0;margin:0;display:flex;align-items:center;flex:none}
+  .mark img{width:92px;flex:none}
   #nav{display:flex;gap:4px;margin-left:auto}
   #nav a{padding:7px 12px;white-space:nowrap;font-size:12.5px}
   .sidefoot{display:none}
@@ -370,10 +352,7 @@ button.bt.clr:hover{border-color:var(--red);color:var(--redink)}
   /* a select sizes itself to its longest option; without this, "South Africa (SAHPRA)"
      forces every filter onto its own row */
   .ctrls .sel{min-width:0;width:100%}
-  .mark{gap:9px}
-  .mark svg{width:30px;height:30px}
-  .mark span{font-size:0}
-  .mark span b{font-size:16px;white-space:nowrap}
+  .mark img{width:82px}
   #nav a{min-height:40px;display:flex;align-items:center}
   .kpis{grid-template-columns:repeat(2,1fr);gap:10px}
   .row3,.row2{grid-template-columns:1fr}
@@ -402,15 +381,9 @@ button.bt.clr:hover{border-color:var(--red);color:var(--redink)}
 }
 </style>
 
-</head>
-<body>
 <aside class="side" id="side">
   <a class="mark" href="#top">
-    <svg viewBox="0 0 36 36" aria-hidden="true"><rect width="36" height="36" rx="10" fill="var(--brand)"/>
-      <rect x="8" y="20" width="4.5" height="8" rx="2" fill="#fff" opacity=".65"/>
-      <rect x="15.75" y="13" width="4.5" height="15" rx="2" fill="#fff"/>
-      <rect x="23.5" y="8" width="4.5" height="20" rx="2" fill="#f0a52c"/></svg>
-    <span><b>SKant</b>Portfolio Control</span>
+    <img src="data:image/png;base64,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" width="280" height="145" alt="S Kant Healthcare Ltd.">
   </a>
   <nav id="nav">
     <a href="#top" data-s="top" class="on">Overview</a>
@@ -431,7 +404,7 @@ button.bt.clr:hover{border-color:var(--red);color:var(--redink)}
 <div class="main" id="top">
 <div class="bar"><div class="barin">
   <div class="logo">
-    <h1><em>SKant</em> Portfolio Control</h1>
+    <h1>Portfolio Control</h1>
     <p id="meta">loading</p>
   </div>
   <div class="ctrls">
@@ -1192,6 +1165,3 @@ let wasPhone=innerWidth<=760;
 addEventListener('resize',()=>{const now=innerWidth<=760;
   if(now!==wasPhone){wasPhone=now; register(cur());}});
 </script>
-
-</body>
-</html>
